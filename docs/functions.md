@@ -12,8 +12,8 @@
 
 Start the NeleBotX class: virify the token, start other classes and load user and group or channel.
 
-| Parameters    | Type          | Required  | Description |
-| ------------- |:-------------:| :-------------: | -------:|
+| Parameters    | Type          | Required  | Description    |
+| ------------- |:-------------:| :-------------: |: -------:|
 | $configs      | Array | Yes | Contains all variables of [$configs](./variables#configs)
 
 # NeleBotX::loadUser
