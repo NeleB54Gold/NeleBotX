@@ -28,7 +28,7 @@ See [setWebhook](https://core.telegram.org/bots/api#setwebhook) for more info.
 
 ## How to use
 
-See all methods and functions [here](./docs/functions.md) and variables [here](./docs/variables.md).
+See all methods and functions [here](./functions.md) and variables [here](./variables.md).
 
 ## About NeleBot X
 
