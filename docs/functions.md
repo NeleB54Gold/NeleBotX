@@ -16,7 +16,7 @@ Start the NeleBotX class: virify the token, start other classes and load user an
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $configs      | Array | Yes | Contains all variables of [$configs](./variables#configs)
+| $configs      | Array | Yes | Contains all variables of [$configs](./variables.md#configs)
 
 ### NeleBotX::loadUser
 
