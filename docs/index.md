@@ -1,37 +1,24 @@
-## Welcome to GitHub Pages
+## NeleBot X Framework
 
-You can use the [editor on GitHub](https://github.com/NeleB54Gold/NeleBotX/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+Develop your own Telegram Bot in PHP with NeleBot X!
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Requirements
 
-### Markdown
+- [Required] Local Telegram Bot API or a webhost with SSL.
+- PHP 7 recommented!
+- [Required] PHP Extension: [cURL](https://www.php.net/manual/en/book.curl.php)
+- [Required only for SQLite/MySQL/PostgreSQL database] PHP Extension: [PDO](https://www.php.net/manual/en/book.pdo.php)
+- [Required only for Redis database] PHP Extension: [Redis](https://github.com/phpredis/phpredis)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Setup
 
-```markdown
-Syntax highlighted code block
+_The setup guide is being written..._
 
-# Header 1
-## Header 2
-### Header 3
+### How to use
 
-- Bulleted
-- List
+See all methods and functions [here](./functions.md) and variables [here](./variables.md).
 
-1. Numbered
-2. List
+## About NeleBot X
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/NeleB54Gold/NeleBotX/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+[Telegram Channel](https://t.me/NeleBotX)
+[Telegram Chat](https://t.me/NeleBotXSupport)
