@@ -16,7 +16,7 @@ _The setup guide is being written..._
 
 ### How to use
 
-See all methods and functions [here](./functions.md) and variables [here](./variables.md).
+See all methods and functions [here](./docs/functions.md) and variables [here](./docs/variables.md).
 
 ## About NeleBot X
 
