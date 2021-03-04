@@ -38,7 +38,7 @@ Calculate the flood via Redis.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| [$database](./variables.md#db) | Class | Yes | Contains Database class |
+| [$database](#Database) | Class | Yes | Contains Database class |
 | $id | Numeric | Yes | Contains Telegram ID |
 
 # Database
