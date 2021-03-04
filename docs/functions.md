@@ -1,10 +1,10 @@
 # Classes and functions
 
-- [NeleBotX](#NeleBotX)
-- [AntiFlood](#AntiFlood)
-- [Database](#Database)
-- [Variables](#Variables)
-- [TelegramBot](#TelegramBot)
+- [NeleBotX](#nelebotx)
+- [AntiFlood](#antiflood)
+- [Database](#database)
+- [Variables](#variables)
+- [TelegramBot](#telegrambot)
 
 # NeleBotX
 
