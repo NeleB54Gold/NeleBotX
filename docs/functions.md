@@ -157,13 +157,87 @@ Create the LIMIT SQL statement. Return as string.
 
 Create default Framework tables. Return as array.
 
-### createTemplateTable
+### Database::createTemplateTable
 
 Get the SQL Statement tamplate of a Framework table.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
 | [$table](https://github.com/phpredis/phpredis#keys-and-strings) | String | Yes | Table name |
+
+### Database::getUser
+
+Get user variables and automatically insert it in the database if not exists.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$user](https://core.telegram.org/bots/api#user) | Array | Yes | Telegram User informations |
+
+### Database::getGroup
+
+Get group variables and automatically insert it in the database if not exists.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$chat](https://core.telegram.org/bots/api#chat) | Array | Yes | Telegram Chat informations |
+
+### Database::getChannel
+
+Get channel variables and automatically insert it in the database if not exists.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$chat](https://core.telegram.org/bots/api#chat) | Array | Yes | Telegram Chat informations |
+
+### Database::getChatsByAdmin
+
+Get groups and channels variables by a Telegram User ID that is an administrator in it.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $user_id | Number | Yes | Telegram User ID |
+| $limit | Number | Optional | Limit for the query |
+
+### Database::ban
+
+Ban a chat from the Bot. Bot's admins excluded.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $id | Number | Yes | Chat ID |
+
+### Database::unban
+
+Unban a chat from the Bot.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $id | Number | Yes | Chat ID |
+
+### Database::isBanned
+
+Check if a chat has been banned. Return an array with ban for table.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $id | Number | Yes | Chat ID |
+
+### Database::getLanguage
+
+Get the user language.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $id | Number | Yes | User ID |
+
+### Database::setStatus
+
+Set user status on database.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $id | Number | Yes | User ID |
+| $status | String | Optional | Status of a user on your Bot |
 
 # Variables
 
