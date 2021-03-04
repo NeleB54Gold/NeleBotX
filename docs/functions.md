@@ -34,7 +34,7 @@ Return an array of current channel automatically generated from the update or lo
 
 ### AntiFlood::__construct
 
-Calculate the flood via Redis.
+Calculate the flood via Redis. 
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
@@ -42,6 +42,52 @@ Calculate the flood via Redis.
 | $id | Numeric | Yes | Contains Telegram ID |
 
 # Database
+
+### Database::__construct
+
+Start connection to SQLite/MySQL/PostrgeSQL or/and Redis.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$configs](./variables.md#configs) | Array | Yes | Contains all variables for the Framework |
+
+### Database::redisConnect
+
+Try to connect to the Redis server.
+
+### Database::rget
+
+Try to [get](https://github.com/phpredis/phpredis#get) value of a key from Redis.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$key](https://github.com/phpredis/phpredis#keys-and-strings) | String | Yes | Key |
+
+### Database::rset
+
+Try to [set](https://github.com/phpredis/phpredis#set) the string value as value of key.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$key](https://github.com/phpredis/phpredis#keys-and-strings) | String | Yes | Key |
+| [$value](https://github.com/phpredis/phpredis#keys-and-strings) | String | Yes | Value |
+| [$time](https://github.com/phpredis/phpredis#set) | Number or Array | Optional | Timeout or Options Array |
+
+### Database::rdel
+
+Try to [delete](https://github.com/phpredis/phpredis#del-delete-unlink) a key from Redis.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$key](https://github.com/phpredis/phpredis#keys-and-strings) | String | Yes | Key |
+
+### Database::rkeys
+
+Try to get [keys](https://github.com/phpredis/phpredis#keys-getkeys) that match a certain pattern from Redis.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$key](https://github.com/phpredis/phpredis#keys-and-strings) | String | Yes | Key |
 
 # Variables
 
