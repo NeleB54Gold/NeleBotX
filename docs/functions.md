@@ -16,7 +16,7 @@ Start the NeleBotX class: virify the token, start other classes and load user an
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| [$configs](./variables.md#configs) | Array | Yes | Contains all variables for the Framework
+| [$configs](./variables.md#configs) | Array | Yes | Contains all variables for the Framework |
 
 ### NeleBotX::loadUser
 
@@ -29,3 +29,20 @@ Return an array of current group automatically generated from the update or load
 ### NeleBotX::loadChannel
 
 Return an array of current channel automatically generated from the update or load from database if available.
+
+# AntiFlood
+
+### AntiFlood::__construct
+
+Calculate the flood via Redis.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$database](./variables.md#db) | Class | Yes | Contains Database class |
+| $id | Numeric | Yes | Contains Telegram ID |
+
+# Database
+
+# Variables
+
+# TelegramBot
