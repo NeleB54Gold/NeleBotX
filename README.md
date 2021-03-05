@@ -16,7 +16,7 @@ Develop your own Telegram Bot in PHP with NeleBot X!
 
 ### How to setup and use
 
-See the docs [here](./docs).
+See the docs [here](https://neleb54gold.github.io/NeleBotX/).
 
 ## About NeleBot X
 
