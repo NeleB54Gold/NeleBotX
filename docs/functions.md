@@ -300,3 +300,265 @@ It only changes the script configurations, not the file.
 |:-------------:|:-------------:|:---------:|:--------------:|
 | $key | Array | Yes | [$configs](./variables#configs) key |
 | $value | All | Yes | Value |
+
+### TelegramBot::getConfigs
+
+Get the current script configurations. Return [$configs](./variables#configs).
+
+### TelegramBot::sendLog
+
+Send logs to the logs chat.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $message | String | Yes | Error message |
+
+### TelegramBot::request
+
+Make cURL requests.
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $url | String | Yes | Request url |
+| $args | Array | Optional | Arguments for the request |
+| $post | Bool or 'def' | Optional | True to post, false to get or 'def' by default from configs |
+
+### TelegramBot::getUpdate
+
+Get the current update.
+
+### TelegramBot::api
+
+Create the Telegram Bot API url for any method.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $method | String | Yes | Telegram Bot API [method](https://core.telegram.org/bots/api#available-methods) |
+
+### TelegramBot::getMe
+
+Return the Bot profile infos.
+
+### TelegramBot::logOut
+
+[Log out](https://core.telegram.org/bots/api#logout) from the current API.
+
+### TelegramBot::close
+
+[Close](https://core.telegram.org/bots/api#close) connection with API server.
+
+### TelegramBot::sendMessage
+
+Send text message.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $text | String | Yes | Text of the message. Max 4096 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $preview | Bool or 'def' | Optional | Disable web content preview |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::forwardMessage
+
+Forward a message. Only if the Bot can see it.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID where the message will be sent |
+| $from_id | Number | Yes | Chat ID where the message is |
+| $id | Number | Yes | Message ID |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::copyMessage
+
+Send a copy of message.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $from_id | Number | Yes | Chat ID where the message is |
+| $id | Number | Yes | Message ID |
+| $caption | String | Yes | Caption of the message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons. |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $preview | Bool or 'def' | Optional | Disable web content preview |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendPhoto
+
+Send a Photo.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| $caption | String | Yes | Caption of the message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendAudio
+
+Send an Audio.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| $caption | String | Yes | Caption of the message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendDocument
+
+Send a Document.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| $caption | String | Yes | Caption of the message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendVideo
+
+Send a Video.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| $caption | String | Yes | Caption of the message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendAnimation
+
+Send an Animation.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| $caption | String | Yes | Caption of the message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendVoice
+
+Send a Voice.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| $caption | String | Yes | Caption of the message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendVideoNote
+
+Send a Video Note.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendMediaGroup
+
+Send a group of media.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| [$documents](https://core.telegram.org/bots/api#sendmediagroup) | Number | Yes | Array of documents |
+| $reply | Number | Optional | Reply to message |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendLocation
+
+Send a location with coordinates.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $lati | Number | Yes | Latitude |
+| $long | Number | Yes | Longitude |
+| [$live](https://telegram.org/blog/live-locations) | Number | Yes | Send as live location |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+
+### TelegramBot::editLiveLocation
+
+Edit a live location with coordinates.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $message_id | Number | Yes | Message ID |
+| $lati | Number | Yes | Latitude |
+| $long | Number | Yes | Longitude |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::stopLiveLocation
+
+Stop a live location.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $message_id | Number | Yes | Message ID |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendVenue
+
+Send venue with coordinates.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $lati | Number | Yes | Latitude |
+| $long | Number | Yes | Longitude |
+| $title | String | Yes | Title |
+| $address | String | Yes | Address |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendContact
