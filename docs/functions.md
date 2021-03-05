@@ -241,4 +241,34 @@ Set user status on database.
 
 # Variables
 
+For all var functions see the Telegram [Available types](https://core.telegram.org/bots/api#available-types).
+
+### Variables::isAdmin
+
+Check if the user is an administrator of the Bot by configs.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $id | Number | Optional | User ID |
+
+### Variables::getUser
+
+Get the current user by the update variables. Return null if not found.
+
+### Variables::getGroup
+
+Get the current group by the update variables. Return null if not found.
+
+### Variables::getChannel
+
+Get the current channel by the update variables. Return null if not found.
+
+### Variables::getGroupsPerms
+
+Get the default Telegram [permissions](https://core.telegram.org/bots/api#chatpermissions) for only groups.
+
+### Variables::getChannelsPerms
+
+Get the default [Telegram permissions](https://core.telegram.org/bots/api#chatpermissions) for only channels.
+
 # TelegramBot
