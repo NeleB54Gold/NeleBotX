@@ -243,6 +243,15 @@ Set user status on database.
 
 For all var functions see the Telegram [Available types](https://core.telegram.org/bots/api#available-types).
 
+### Variables::__construct
+
+Create all variables that can exists in the update.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$configs](./variables.md#configs) | Array | Yes | Contains all variables for the Framework |
+| [$update](https://core.telegram.org/bots/api#update) | Array | Yes | Contains all variables from the Telegram update |
+
 ### Variables::isAdmin
 
 Check if the user is an administrator of the Bot by configs.
@@ -272,3 +281,22 @@ Get the default Telegram [permissions](https://core.telegram.org/bots/api#chatpe
 Get the default [Telegram permissions](https://core.telegram.org/bots/api#chatpermissions) for only channels.
 
 # TelegramBot
+
+To create new functions you can check the Telegram [methods](https://core.telegram.org/bots/api#available-methods)!
+
+### TelegramBot::__construct
+
+Start the class to make requests.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$configs](./variables.md#configs) | Array | Yes | Contains all variables for the Framework |
+
+### TelegramBot::editConfigs
+
+It only changes the script configurations, not the file. 
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $key | Array | Yes | [$configs](./variables#configs) key |
+| $value | All | Yes | Value |
