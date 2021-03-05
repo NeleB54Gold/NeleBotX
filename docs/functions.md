@@ -142,7 +142,7 @@ Custom general unique query with prepare on PDO connection.
 |:-------------:|:-------------:|:---------:|:--------------:|
 | [$query](https://www.php.net/manual/en/class.pdostatement.php) | String | Yes | SQL statement |
 | [$args](https://www.php.net/manual/en/pdostatement.execute) | Array | Optional | An array of values with as many elements as there are bound parameters in the SQL statement being executed. |
-| $return | Number | Optional | Return of contents can be 0 to return only true on succes, 1 to [fetch](https://www.php.net/manual/en/pdostatement.fetch) with FETCH_ASSOC, or 2 to [fetchAll](https://www.php.net/manual/en/pdostatement.fetchall.php) |
+| $return | Number | Optional | Return of contents can be 0 to return only true on success, 1 to [fetch](https://www.php.net/manual/en/pdostatement.fetch) with FETCH_ASSOC, or 2 to [fetchAll](https://www.php.net/manual/en/pdostatement.fetchall.php) |
 
 ### Database::limit
 
