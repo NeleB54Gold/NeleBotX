@@ -151,7 +151,7 @@ Create the LIMIT SQL statement. Return as string.
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
 | [$limit](https://github.com/phpredis/phpredis#keys-and-strings) | ALL or Nubmer | Optional | Start of the range |
-| [$args](https://github.com/phpredis/phpredis#keys-and-strings) | Number | Optional | End of the range |
+| [$offset](https://github.com/phpredis/phpredis#keys-and-strings) | Number | Optional | End of the range |
 
 ### Database::setup
 
