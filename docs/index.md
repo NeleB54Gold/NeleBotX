@@ -8,10 +8,12 @@ Develop your own Telegram Bot in PHP with NeleBot X!
 - [Local Telegram Bot API](https://github.com/tdlib/telegram-bot-api) or a webhost with SSL. **[Required]**
 - [PHP 7](https://www.php.net/downloads) recommented! **[Required]**
 - PHP Extension: [cURL](https://www.php.net/manual/en/book.curl.php) **[Required]**
-- PHP Extension: [PDO](https://www.php.net/manual/en/book.pdo.php) *[Required only for SQLite/MySQL/PostgreSQL database]*
-- PHP Extension: [Redis](https://github.com/phpredis/phpredis) *[Required only for Redis database]*
+- PHP Extension: [PDO](https://www.php.net/manual/en/book.pdo.php) *[Optional: only for SQLite/MySQL/PostgreSQL database]*
+- PHP Extension: [Redis](https://github.com/phpredis/phpredis) *[Optional: only for Redis database]*
 
 ## Setup
+
+Create and develop your custom Telegram Bot: Let's start!
 
 #### Get the API Token 
 
@@ -32,6 +34,6 @@ See all methods and functions [here](./functions.md) and variables [here](./vari
 
 ## About NeleBot X
 
-[Telegram Channel](https://t.me/NeleBotX)
+[🔔 Telegram Channel](https://t.me/NeleBotX)
 
-[Telegram Chat](https://t.me/NeleBotXSupport)
+[💬 Telegram Chat](https://t.me/NeleBotXSupport)
