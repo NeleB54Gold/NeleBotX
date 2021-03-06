@@ -649,3 +649,174 @@ Promote a chat member on groups and channels.
 | $user_id | Number | Yes | User ID |
 | $permissions | Array | Yes | User permissions. See [Variables::getGroupsPerms](#variables) for groups and [Variables::getChannelsPerms](#variables) for channels |
 | $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::setCustomTitle
+
+Set chat administrator custom title.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $user_id | Number | Yes | User ID |
+| $custom_title | String | Yes | Administrator title for groups |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::setPerms
+
+Set global chat permissions.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $permissions | Array | Yes | Global group permissions |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::getLink
+
+Export an invite link from groups and channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+
+### TelegramBot::setPhoto
+
+Set chat photo on groups and channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $photo | String | Yes | Photo |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::delPhoto
+
+Remove chat photo on groups and channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::setTitle
+
+Change chat title on groups and channel.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $title | String | Yes | Title |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::setDescription
+
+Change chat title on groups and channel.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $description | String | Optional | Description |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::pinMessage
+
+Pin message on groups and channel.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $message_id | Number | Yes | Message ID |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::unpinMessage
+
+Unpin message on groups and channel.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $message_id | Number | Optional | Message ID. By default unpin the last pinned message |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::unpinAll
+
+Unpin all pinned message on groups and channel.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::leave
+
+Leave groups and channel.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::getChat
+
+Returns chat infos.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+
+### TelegramBot::getAdministrators
+
+Return an array of Users.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+
+### TelegramBot::getMembersCount
+
+Return the number of members from the chat.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+
+### TelegramBot::getMember
+
+Return User infos for groups and channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $user_id | Number | Yes | User ID |
+
+### TelegramBot::setStickerSet
+
+Set the group sticker set.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $sticker_set | String | Yes | Set name |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::delStickerSet
+
+Remove the group sticker set.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::answerCBQ
+
+Answer to a [Callback](https://core.telegram.org/bots/api#callbackquery) query.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $cbq_id | Number | Yes | Callback Query ID |
+| $text | String | Optional | Text |
+| $alert | Bool | Optional | True to see the alert, falso to not see the alert. |
+| $url | String | Optional | URL, instead of $text |
+| $cache_time | Number | Optional | Callback cache time |
+| $response | Bool | Optional | Get the response from the request |
