@@ -562,3 +562,90 @@ Send venue with coordinates.
 | $response | Bool | Optional | Get the response from the request |
 
 ### TelegramBot::sendContact
+
+Send contact with phone number.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $number | Number | Yes | Phone number |
+| $first_name | String | Yes | First name |
+| $last_name | String | Optional | Last name |
+| $vcard | String | Optional | [vCard](https://en.wikipedia.org/wiki/VCard) info |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendAction
+
+Send an action, like "Typing...".
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $action | String | Optional | Action that can be typing, upload_photo, record_video, upload_video, record_voice, upload_voice , upload_document, find_location, record_video_note or upload_video_note. Default to typing |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::getUserPhotos
+
+Return the user profile pic IDs.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $user_id | Number | Yes | USer ID |
+| $offset | Number | Optional | Start of the range. |
+| $limit | Number | Optional | End of the range. Max and default to 100. |
+
+### TelegramBot::getFile
+
+Return the file path. Note: if you have a Local Bot API you can get the file by others method instead of cURL.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| [$file_id](https://core.telegram.org/bots/api#getfile) | String | Yes | Document ID |
+
+### TelegramBot::kickMember
+
+Ban a chat member on groups or channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $user_id | Number | Yes | User ID |
+| $until_date | Number | Optional | Time in seconds |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::unbanMember
+
+Unban a chat member on groups or channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $user_id | Number | Yes | User ID |
+| $only_banned | Bool | Optional | Unban only if the user has been banned. Default to true |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::restrictMember
+
+Restrict a chat member on groups and channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $user_id | Number | Yes | User ID |
+| $permissions | Array | Yes | User permissions. |
+| $until_date | Number | Optional | Time in seconds |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::promoteMember
+
+Promote a chat member on groups and channels.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $user_id | Number | Yes | User ID |
+| $permissions | Array | Yes | User permissions. See [Variables::getGroupsPerms](#variables) for groups and [Variables::getChannelsPerms](#variables) for channels |
+| $response | Bool | Optional | Get the response from the request |
