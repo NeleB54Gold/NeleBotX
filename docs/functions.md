@@ -425,104 +425,106 @@ For sending voice messages, use the sendVoice method instead.
 
 ### TelegramBot::sendDocument
 
-# Send a Document. To complete
+Use this method to send general files. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $document | Number | Yes | Document ID |
-| $caption | String | Yes | Caption of the message. Max 1024 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $reply | Number | Optional | Reply to message |
-| $thumb | File Input | Optional | File thumb |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
+| $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details. Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
+| $thumb | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Optional | Thumbnail of the file sent; can be ignored if thumbnail generation for the file is supported server-side. The thumbnail should be in JPEG format and less than 200 kB in size. A thumbnail's width and height should not exceed 320. Ignored if the file is not uploaded using multipart/form-data. Thumbnails can't be reused and can be only uploaded as a new file, so you can pass “attach://<file_attach_name>” if the thumbnail was uploaded using multipart/form-data under <file_attach_name>. |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendVideo
 
-Send a Video.
+Use this method to send video files, Telegram clients support mp4 videos (other formats may be sent as [Document](https://core.telegram.org/bots/api#document)). On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $document | Number | Yes | Document ID |
-| $caption | String | Yes | Caption of the message. Max 1024 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data |
+| $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details. Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendAnimation
 
-Send an Animation.
+Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without sound). On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $document | Number | Yes | Document ID |
-| $caption | String | Yes | Caption of the message. Max 1024 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Animation to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
+| $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details. Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendVoice
 
-Send a Voice.
+Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as [Audio](https://core.telegram.org/bots/api#audio) or [Document](https://core.telegram.org/bots/api#document)). On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned. 
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $document | Number | Yes | Document ID |
-| $caption | String | Yes | Caption of the message. Max 1024 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Voice to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
+| $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details. Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendVideoNote
 
-Send a Video Note.
+Use this method to send video messages. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $document | Number | Yes | Document ID |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Video note to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
+| $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details. Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendMediaGroup
 
-Send a group of media.
+Use this method to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped in an album with messages of the same type. On success, an array of [Message](https://core.telegram.org/bots/api#message) that were sent is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| [$documents](https://core.telegram.org/bots/api#sendmediagroup) | Number | Yes | Array of documents |
-| $reply | Number | Optional | Reply to message |
-| $response | Bool | Optional | Get the response from the request |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| [$documents](https://core.telegram.org/bots/api#sendmediagroup) | Array of InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo | Yes | A JSON-serialized array describing messages to be sent, must include 2-10 items |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendLocation
 
-Send a location with coordinates.
+Use this method to send point on the map. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $lati | Number | Yes | Latitude |
-| $long | Number | Yes | Longitude |
-| [$live](https://telegram.org/blog/live-locations) | Number | Yes | Send as live location |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $lati | Float number | Yes | Latitude of the location |
+| $long | Float number | Yes | Longitude of the location |
+| [$live](https://telegram.org/blog/live-locations) | Integer | Optional | Period in seconds for which the location will be updated (see [Live Locations](https://telegram.org/blog/live-locations)), should be between 60 and 86400. |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
-
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::editLiveLocation
 
@@ -530,15 +532,15 @@ Edit a live location with coordinates.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $message_id | Number | Yes | Message ID |
-| $lati | Number | Yes | Latitude |
-| $long | Number | Yes | Longitude |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $message_id | Integer or String | Yes | Integer: Required if inline_message_id is not specified. Identifier of the message to edit. String: Required if chat_id and message_id are not specified. Identifier of the inline message |
+| $lati | Float number | Yes | Latitude of the location |
+| $long | Float number | Yes | Longitude of the location |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
-### TelegramBot::stopLiveLocation
+### TelegramBot::stopLiveLocation ----TO
 
 Stop a live location.
 
