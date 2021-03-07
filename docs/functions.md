@@ -821,3 +821,125 @@ Answer to a [Callback](https://core.telegram.org/bots/api#callbackquery) query.
 | $url | String | Optional | URL, instead of $text |
 | $cache_time | Number | Optional | Callback cache time |
 | $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::setCommands
+
+Set the command list on the Bot.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $commands | Array | Yes | Array of commands and description |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::getCommands
+
+Get the command list on the Bot.
+
+### TelegramBot::editText
+
+Edit message text.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Optional | Chat ID, 0 for inline message |
+| $message_id | Number | Yes | Message ID or Inline Message ID |
+| $text | String | Yes | Text of the message. Max 4096 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $preview | Bool or 'def' | Optional | Disable web content preview |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::editCaption
+
+Edit media caption.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID, 0 for inline message |
+| $message_id | Number | Yes | Message ID or Inline Message ID |
+| $caption | String | Optional | Caption of the media message. Max 1024 characters |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::editMedia
+
+Edit media message.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID, 0 for inline message |
+| $message_id | Number | Yes | Message ID or Inline Message ID |
+| $media | Array | Yes | Array of media |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::editReplyMarkup
+
+Edit message buttons.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID, 0 for inline message |
+| $message_id | Number | Yes | Message ID or Inline Message ID |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::deleteMessage
+
+Delete one message.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $message_id | Number | Yes | Message ID |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::sendSticker
+
+Send a Sticker.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $chat_id | Number | Yes | Chat ID |
+| $document | Number | Yes | Document ID |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $reply | Number | Optional | Reply to message |
+| $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
+| $response | Bool | Optional | Get the response from the request |
+
+### TelegramBot::getStickers
+
+Get sticker set.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $set | String | Yes | Sticker set name |
+
+### TelegramBot::uploadSticker
+
+Upload sticker.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $user_id | Number | Yes | User ID |
+| $document | Input File | Yes | Document ID |
+
+### TelegramBot::createStickers
+
+Create a new sticker set.
+
+| Parameters    | Type          | Required  | Description    |
+|:-------------:|:-------------:|:---------:|:--------------:|
+| $user_id | Number | Yes | User ID |
+| $set | String | Yes | Set name |
+| $title | String | Yes | Set title |
+| $sticker | Input File | Yes | Document ID |
+| $is_animated | Bool | Optional | Default to false |
+| $contains_masks | Bool | Optional | Default to false |
+| $mask_position | Bool | Optional | Default to false |
+| $response | Bool | Optional | Get the response from the request |
