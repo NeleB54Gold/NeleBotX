@@ -357,7 +357,7 @@ Use this method to send text messages. On success, the sent [Message](https://co
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $text | String | Yes | Text of the message to be sent, 1-4096 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
 | [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the message text. See [formatting options](https://core.telegram.org/bots/api#formatting-options) for more details. Array: List of special entities that appear in message text, which can be specified instead of parse_mode |
@@ -372,7 +372,7 @@ Use this method to forward messages of any kind. On success, the sent [Message](
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $from_id | Integer or String | Yes | Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername) |
 | $id | Integer | Yes | Message identifier in the chat specified in from_chat_id |
 | $response | Boolean | Optional | Get the response from the request |
@@ -383,7 +383,7 @@ Use this method to copy messages of any kind. The method is analogous to the met
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $from_id | Integer or String | Yes | Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername) |
 | $id | Integer | Yes | Message identifier in the chat specified in from_chat_id |
 | $caption | String | Optional | String: New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept. |
@@ -399,7 +399,7 @@ Use this method to send photos. On success, the sent [Message](https://core.tele
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. |
 | $caption | String | Optional | Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
@@ -415,7 +415,7 @@ For sending voice messages, use the sendVoice method instead.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data |
 | $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
@@ -430,7 +430,7 @@ Use this method to send general files. On success, the sent [Message](https://co
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | File to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
 | $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
@@ -446,7 +446,7 @@ Use this method to send video files, Telegram clients support mp4 videos (other 
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Video to send. Pass a file_id as String to send a video that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a video from the Internet, or upload a new video using multipart/form-data |
 | $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
@@ -461,7 +461,7 @@ Use this method to send animation files (GIF or H.264/MPEG-4 AVC video without s
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Animation to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
 | $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
@@ -476,7 +476,7 @@ Use this method to send audio files, if you want Telegram clients to display the
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Voice to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
 | $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
@@ -491,7 +491,7 @@ Use this method to send video messages. On success, the sent [Message](https://c
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Video note to send. Pass a file_id as String to send a file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data |
 | $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
@@ -506,7 +506,7 @@ Use this method to send a group of photos, videos, documents or audios as an alb
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | [$documents](https://core.telegram.org/bots/api#sendmediagroup) | Array of InputMediaAudio, InputMediaDocument, InputMediaPhoto and InputMediaVideo | Yes | A JSON-serialized array describing messages to be sent, must include 2-10 items |
 | $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
@@ -518,7 +518,7 @@ Use this method to send point on the map. On success, the sent [Message](https:/
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $lati | Float number | Yes | Latitude of the location |
 | $long | Float number | Yes | Longitude of the location |
 | [$live](https://telegram.org/blog/live-locations) | Integer | Optional | Period in seconds for which the location will be updated (see [Live Locations](https://telegram.org/blog/live-locations)), should be between 60 and 86400. |
@@ -529,11 +529,11 @@ Use this method to send point on the map. On success, the sent [Message](https:/
 
 ### TelegramBot::editLiveLocation
 
-Edit a live location with coordinates.
+Use this method to edit live location messages. A location can be edited until its live_period expires or editing is explicitly disabled by a call to [stopMessageLiveLocation](https://core.telegram.org/bots/api#stopmessagelivelocation). On success, if the edited message is not an inline message, the edited [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
 | $message_id | Integer or String | Yes | Integer: Required if inline_message_id is not specified. Identifier of the message to edit. String: Required if chat_id and message_id are not specified. Identifier of the inline message |
 | $lati | Float number | Yes | Latitude of the location |
 | $long | Float number | Yes | Longitude of the location |
@@ -541,103 +541,103 @@ Edit a live location with coordinates.
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
 | $response | Boolean | Optional | Get the response from the request |
 
-### TelegramBot::stopLiveLocation ----TO
+### TelegramBot::stopLiveLocation
 
-Stop a live location.
+Use this method to stop updating a live location message before live_period expires. On success, if the message was sent by the bot, the sent [Message](https://core.telegram.org/bots/api#message) is returned, otherwise True is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $message_id | Number | Yes | Message ID |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
+| $message_id | Integer or String | Yes | Integer: Required if inline_message_id is not specified. Identifier of the message to edit. String: Required if chat_id and message_id are not specified. Identifier of the inline message |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendVenue
 
-Send venue with coordinates.
+Use this method to send information about a venue. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $lati | Number | Yes | Latitude |
-| $long | Number | Yes | Longitude |
-| $title | String | Yes | Title |
-| $address | String | Yes | Address |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
+| $lati | Float number | Yes | Latitude of the venue |
+| $long | Float number | Yes | Longitude of the venue |
+| $title | String | Yes | Name of the venue |
+| $address | String | Yes | Address of the venue |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendContact
 
-Send contact with phone number.
+Use this method to send phone contacts. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $number | Number | Yes | Phone number |
-| $first_name | String | Yes | First name |
-| $last_name | String | Optional | Last name |
-| $vcard | String | Optional | [vCard](https://en.wikipedia.org/wiki/VCard) info |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
+| $number | String | Yes | Contact's phone number |
+| $first_name | String | Yes | Contact's first name |
+| $last_name | String | Optional | Contact's last name |
+| $vcard | String | Optional | Additional data about the contact in the form of a [vCard](https://en.wikipedia.org/wiki/VCard), 0-2048 bytes |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendAction
 
-Send an action, like "Typing...".
+Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns *True* on success.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $action | String | Optional | Action that can be typing, upload_photo, record_video, upload_video, record_voice, upload_voice , upload_document, find_location, record_video_note or upload_video_note. Default to typing |
-| $response | Bool | Optional | Get the response from the request |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format <code>@channelusername</code>) |
+| $action | String | Optional | Type of action to broadcast. Choose one, depending on what the user is about to receive: *typing* for text messages, *upload_photo* for photos, *record_video* or *upload_video* for videos, *record_voice* or *upload_voice* for voice notes, *upload_document* for general files, *find_location* for location data, *record_video_note* or *upload_video_note* for video notes. Default to *typing* |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::getUserPhotos
 
-Return the user profile pic IDs.
+Use this method to get a list of profile pictures for a user. Returns a [UserProfilePhotos](https://core.telegram.org/bots/api#userprofilephotos) object.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $user_id | Number | Yes | USer ID |
-| $offset | Number | Optional | Start of the range. |
-| $limit | Number | Optional | End of the range. Max and default to 100. |
+| $user_id | Integer | Yes | Unique identifier of the target user |
+| $offset | Integer | Optional | Sequential number of the first photo to be returned. By default, all photos are returned. |
+| $limit | Integer | Optional | Limits the number of photos to be retrieved. Values between 1-100 are accepted. Defaults to 100. |
 
 ### TelegramBot::getFile
 
-Return the file path. Note: if you have a Local Bot API you can get the file by others method instead of cURL.
+Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link *https://api.telegram.org/file/bot\<token>/<file_path>*, where *<file_path>* is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile again.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| [$file_id](https://core.telegram.org/bots/api#getfile) | String | Yes | Document ID |
+| [$file_id](https://core.telegram.org/bots/api#getfile) | String | Yes | File identifier to get info about |
 
 ### TelegramBot::kickMember
 
-Ban a chat member on groups or channels.
+Use this method to kick a user from a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the chat on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns *True* on success.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $user_id | Number | Yes | User ID |
-| $until_date | Number | Optional | Time in seconds |
-| $response | Bool | Optional | Get the response from the request |
+| $chat_id | Integer or String | Yes | Unique identifier for the target group or username of the target supergroup or channel (in the format <code>@channelusername</code>) |
+| $user_id | Integer | Yes | Unique identifier of the target user |
+| $until_date | Integer | Optional | Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever. Applied for supergroups and channels only. |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::unbanMember
 
-Unban a chat member on groups or channels.
+Use this method to unban a previously kicked user in a supergroup or channel. The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be **removed** from the chat. If you don't want this, use the parameter *only_if_banned*. Returns True on success.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $user_id | Number | Yes | User ID |
-| $only_banned | Bool | Optional | Unban only if the user has been banned. Default to true |
-| $response | Bool | Optional | Get the response from the request |
+| $chat_id | Integer or String | Yes | Unique identifier for the target group or username of the target supergroup or channel (in the format <code>@username</code>) |
+| $user_id | Integer | Yes | Unique identifier of the target user |
+| $only_banned | Boolean | Optional | Do nothing if the user is not banned. Default to true |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::restrictMember
 
-Restrict a chat member on groups and channels.
+### Restrict a chat member on groups and channels. ----TO
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
