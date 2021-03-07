@@ -316,6 +316,7 @@ Send logs to the logs chat.
 ### TelegramBot::request
 
 Make cURL requests. See how can you make [requests](https://core.telegram.org/bots/faq#how-can-i-make-requests-in-response-to-updates) in response to Telegram updates.
+
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
 | $url | String | Yes | Request url |
