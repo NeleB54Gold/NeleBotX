@@ -431,6 +431,7 @@ Send a Document.
 | [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
 | [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
 | $reply | Number | Optional | Reply to message |
+| $thumb | File Input | Optional | File thumb |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
 | $response | Bool | Optional | Get the response from the request |
 
