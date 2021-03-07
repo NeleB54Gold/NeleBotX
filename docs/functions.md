@@ -315,20 +315,21 @@ Send logs to the logs chat.
 
 ### TelegramBot::request
 
-Make cURL requests.
+Make cURL requests. See how can you make [requests](https://core.telegram.org/bots/faq#how-can-i-make-requests-in-response-to-updates) in response to Telegram updates.
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
 | $url | String | Yes | Request url |
 | $args | Array | Optional | Arguments for the request |
-| $post | Bool or 'def' | Optional | True to post, false to get or 'def' by default from configs |
+| $post | Boolean or 'def' | Optional | True to post, false to get or 'def' by default from configs |
 
 ### TelegramBot::getUpdate
 
-Get the current update.
+Return the current [update](https://core.telegram.org/bots/api#update).
 
 ### TelegramBot::api
 
-Create the Telegram Bot API url for any method.
+Create the Telegram Bot API url for any method. 
+See the [Local API Server](https://core.telegram.org/bots/api#do-i-need-a-local-bot-api-server) to have [features](https://core.telegram.org/bots/api#using-a-local-bot-api-server).
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
@@ -336,92 +337,99 @@ Create the Telegram Bot API url for any method.
 
 ### TelegramBot::getMe
 
-Return the Bot profile infos.
+A simple method for testing your bot's auth token.
+Returns basic information about the bot in form of a [User](https://core.telegram.org/bots/api#user) object.
 
 ### TelegramBot::logOut
-
-[Log out](https://core.telegram.org/bots/api#logout) from the current API.
+Use this method to log out from the cloud Bot API server before launching the bot locally.
+After a successful call, you can immediately log in on a local server, but will not be able to log in back to the cloud Bot API server for 10 minutes.
+See the Bot [Log out](https://core.telegram.org/bots/api#logout).
 
 ### TelegramBot::close
 
-[Close](https://core.telegram.org/bots/api#close) connection with API server.
+Use this method to close the bot instance before moving it from one local server to another. 
+See [Close](https://core.telegram.org/bots/api#close) docs.
 
 ### TelegramBot::sendMessage
 
-Send text message.
+Use this method to send text messages. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $text | String | Yes | Text of the message. Max 4096 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $preview | Bool or 'def' | Optional | Disable web content preview |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $text | String | Yes | Text of the message to be sent, 1-4096 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the message text. See [formatting options](https://core.telegram.org/bots/api#formatting-options) for more details.
+Array: List of special entities that appear in message text, which can be specified instead of parse_mode |
+| $preview | Boolean or 'def' | Optional | Disables link previews for links in this message |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::forwardMessage
 
-Forward a message. Only if the Bot can see it.
+Use this method to forward messages of any kind. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID where the message will be sent |
-| $from_id | Number | Yes | Chat ID where the message is |
-| $id | Number | Yes | Message ID |
-| $response | Bool | Optional | Get the response from the request |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $from_id | Integer or String | Yes | Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername) |
+| $id | Integer | Yes | Message identifier in the chat specified in from_chat_id |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::copyMessage
 
-Send a copy of message.
+Use this method to copy messages of any kind. The method is analogous to the method [forwardMessages](https://core.telegram.org/bots/api#forwardmessage), but the copied message doesn't have a link to the original message. Returns the [MessageId](https://core.telegram.org/bots/api#messageid) of the sent message on success.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $from_id | Number | Yes | Chat ID where the message is |
-| $id | Number | Yes | Message ID |
-| $caption | String | Yes | Caption of the message. Max 1024 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons. |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $preview | Bool or 'def' | Optional | Disable web content preview |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $from_id | Integer or String | Yes | Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername) |
+| $id | Integer | Yes | Message identifier in the chat specified in from_chat_id |
+| $caption | String | Optional | String: New caption for media, 0-1024 characters after entities parsing. If not specified, the original caption is kept. |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details.
+Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendPhoto
 
-Send a Photo.
+Use this method to send photos. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $document | Number | Yes | Document ID |
-| $caption | String | Yes | Caption of the message. Max 1024 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Photo to send. Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet, or upload a new photo using multipart/form-data. |
+| $caption | String | Optional | Photo caption (may also be used when resending photos by file_id), 0-1024 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details.
+Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendAudio
 
-Send an Audio.
+Use this method to send audio files, if you want Telegram clients to display them in the music player. Your audio must be in the .MP3 or .M4A format. On success, the sent [Message](https://core.telegram.org/bots/api#message) is returned. Bots can currently send audio files of up to 50 MB in size, this limit may be changed in the future.
+For sending voice messages, use the sendVoice method instead.
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
-| $chat_id | Number | Yes | Chat ID |
-| $document | Number | Yes | Document ID |
-| $caption | String | Yes | Caption of the message. Max 1024 characters |
-| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Buttons |
-| [$parse](https://core.telegram.org/bots/api#formatting-options) | String | Optional | Parse mode |
-| $reply | Number | Optional | Reply to message |
+| $chat_id | Integer or String | Yes | Unique identifier for the target chat or username of the target channel (in the format @channelusername) |
+| $document | [InputFile](https://core.telegram.org/bots/api#inputfile) or String | Yes | Audio file to send. Pass a file_id as String to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio file from the Internet, or upload a new one using multipart/form-data |
+| $caption | String | Optional | Audio caption, 0-1024 characters after entities parsing |
+| [$buttons](https://core.telegram.org/bots/api#inlinekeyboardmarkup) | Array | Optional | Array of keyboardButton or inlineKeyboardButton |
+| [$parse](https://core.telegram.org/bots/api#formatting-options) | String or Array | Optional | String: Mode for parsing entities in the new caption. See formatting options for more details.
+Array: List of special entities that appear in the new caption, which can be specified instead of parse_mode |
+| $reply | Integer | Optional | If the message is a reply, ID of the original message |
 | $buttonsType | String | Optional | Type of reply_markup. Can be reply, remove, hide or inline. Use inline by default |
-| $response | Bool | Optional | Get the response from the request |
+| $response | Boolean | Optional | Get the response from the request |
 
 ### TelegramBot::sendDocument
 
-Send a Document.
+# Send a Document. To complete
 
 | Parameters    | Type          | Required  | Description    |
 |:-------------:|:-------------:|:---------:|:--------------:|
