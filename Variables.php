@@ -26,6 +26,8 @@ class Variables
 			$this->varChatMemberUpdated($this->update['my_chat_member']);
 		} elseif ($this->update['chat_member']) {
 			$this->varChatMemberUpdated($this->update['chat_member']);
+		} elseif ($this->update['inline_query']) {
+			$this->varInlineQuery($this->update['inline_query']);
 		} elseif ($this->update['chosen_inline_result']) {
 			$this->varChosenInlineResult($this->update['chosen_inline_result']);
 		} elseif ($this->update['callback_query']) {
