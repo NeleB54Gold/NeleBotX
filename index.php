@@ -36,7 +36,6 @@ try {
 	$user = $NeleBotX->user;
 	$group = $NeleBotX->group;
 	$channel = $NeleBotX->channel;
-	if (!$NeleBotX->response['ok'] and $NeleBotX->response['error_code']) die;
 } catch (Exception $e) {
 	# Bot Exceptions
 	$NeleBotX->response = ['ok' => false, 'error_code' => 500, 'description' => 'Class Error: ' . $e->getMessage()];
