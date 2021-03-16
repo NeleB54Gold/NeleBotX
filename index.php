@@ -41,7 +41,7 @@ try {
 	$NeleBotX->response = ['ok' => false, 'error_code' => 500, 'description' => 'Class Error: ' . $e->getMessage()];
 }
 if (!$NeleBotX->response['ok']) {
-	$bot->sendLog($bot->bold('The Bot was stopped!') . PHP_EOL . $bot->code($NeleBotX->response['description'], 1));
+	if ($NeleBotX->response['error_code'] != 429) $bot->sendLog($bot->bold('The Bot was stopped!') . PHP_EOL . $bot->code($NeleBotX->response['description'], 1));
 	die($NeleBotX->response['error_code']);
 } else {
 	http_response_code(200);

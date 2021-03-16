@@ -1042,7 +1042,7 @@ class TelegramBot
 			'input_message_content'	=> $input
 		];
 		if ($description) $args['description'] = $description;
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		if ($url) $args['url'] = $url;
 		if ($hide_url) $args['hide_url'] = 1;
 		if ($thumb) $args['thumb_url'] = $thumb;
@@ -1060,7 +1060,7 @@ class TelegramBot
 		if ($description) $args['description'] = $description;
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['caption_entities'] = json_encode($parse);
+			$args['caption_entities'] = $parse;
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
@@ -1070,7 +1070,7 @@ class TelegramBot
 		} else {
 			$args['thumb_url'] = $document;
 		}
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1085,7 +1085,7 @@ class TelegramBot
 		if ($description) $args['description'] = $description;
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['caption_entities'] = json_encode($parse);
+			$args['caption_entities'] = $parse;
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
@@ -1095,7 +1095,7 @@ class TelegramBot
 		} else {
 			$args['thumb_url'] = $document;
 		}
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1110,7 +1110,7 @@ class TelegramBot
 		if ($description) $args['description'] = $description;
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['caption_entities'] = json_encode($parse);
+			$args['caption_entities'] = $parse;
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
@@ -1121,7 +1121,7 @@ class TelegramBot
 			$args['thumb_url'] = $document;
 		}
 		$args['mime_type'] = 'video/mp4';
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1136,12 +1136,12 @@ class TelegramBot
 		if ($description) $args['description'] = $description;
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['caption_entities'] = json_encode($parse);
+			$args['caption_entities'] = $parse;
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
 		}
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1156,12 +1156,12 @@ class TelegramBot
 		if ($description) $args['description'] = $description;
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['caption_entities'] = json_encode($parse);
+			$args['caption_entities'] = $parse;
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
 		}
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1176,13 +1176,13 @@ class TelegramBot
 		if ($description) $args['description'] = $description;
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['caption_entities'] = json_encode($parse);
+			$args['caption_entities'] = $parse;
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
 		}
 		$args['mime_type'] = 'application/pdf';
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1197,7 +1197,7 @@ class TelegramBot
 		];
 		if ($live) $args['live_period'] = $live;
 		if ($thumb) $args['thumb_url'] = $thumb;
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1212,7 +1212,7 @@ class TelegramBot
 			'address'				=> $address
 		];
 		if ($thumb) $args['thumb_url'] = $thumb;
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1227,7 +1227,7 @@ class TelegramBot
 		if ($last_name) $args['last_name'] = $last_name;
 		if ($vcard) $args['last_name'] = $vcard;
 		if ($thumb) $args['thumb_url'] = $thumb;
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1238,7 +1238,7 @@ class TelegramBot
 			'id'					=> $id,
 			'game_short_name'		=> $title
 		];
-		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		return $args;
 	}
 	
@@ -1248,7 +1248,7 @@ class TelegramBot
 			'message_text'	=> $text
 		];
 		if (is_array($parse) and !empty($parse)) {
-			$args['entities'] = json_encode($parse);
+			$args['entities'] = $parse;
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
