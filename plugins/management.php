@@ -87,9 +87,9 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 						} else {
 							foreach ($tchat['admins'] as $admin) {
 								if ($admin['status'] == 'creator' and !isset($e[5])) {
+									$febuttons[] = $bot->createInlineButton('👑 ' . $admin['user']['first_name'], 'management-2-' . str_replace('-' . $e[3], '', $e[2]) . '-' . $e[3] . '-admins-' . $admin['user']['id']);
 									if ($admin['user']['username']) $admin['user']['first_name'] = $bot->text_link($admin['user']['first_name'], 'https://t.me/' . $admin['user']['username']);
 									$list .= PHP_EOL . '👑 ' . $admin['user']['first_name'] . ' [' . $bot->code($admin['user']['id']) . ']';
-									$febuttons[] = $bot->createInlineButton('👑 ' . $admin['user']['first_name'], 'management-2-' . str_replace('-' . $e[3], '', $e[2]) . '-' . $e[3] . '-admins-' . $admin['user']['id']);
 								}
 								$cadmins[$admin['user']['id']] = $admin;
 							}
@@ -214,9 +214,9 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 						} else {
 							foreach ($tchat['admins'] as $admin) {
 								if ($admin['status'] == 'creator' and !isset($e[5])) {
+									$febuttons[] = $bot->createInlineButton('👑 ' . $admin['user']['first_name'], 'management-2-' . str_replace('-' . $e[3], '', $e[2]) . '-' . $e[3] . '-admins-' . $admin['user']['id']);
 									if ($admin['user']['username']) $admin['user']['first_name'] = $bot->text_link($admin['user']['first_name'], 'https://t.me/' . $admin['user']['username']);
 									$list .= PHP_EOL . '👑 ' . $admin['user']['first_name'] . ' [' . $bot->code($admin['user']['id']) . ']';
-									$febuttons[] = $bot->createInlineButton('👑 ' . $admin['user']['first_name'], 'management-2-' . str_replace('-' . $e[3], '', $e[2]) . '-' . $e[3] . '-admins-' . $admin['user']['id']);
 								}
 								$cadmins[$admin['user']['id']] = $admin;
 							}
