@@ -659,7 +659,7 @@ class TelegramBot
 	# setMyCommands
 	public function setCommands ($commands = [], $response = 'def') {
 		$args = [
-			'commands'	=> $commands
+			'commands'	=> json_encode($commands)
 		];
 		return $this->request($this->api('setMyCommands'), $args, 'def', $response);
 	}
