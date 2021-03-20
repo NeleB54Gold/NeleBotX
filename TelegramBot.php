@@ -83,6 +83,16 @@ class TelegramBot
 		return $this->request($this->api('getMe'), 0, 'def', 1);
 	}
 	
+	# getWebhookInfo
+	public function getWebhook () {
+		return $this->request($this->api('getWebhookInfo'), 0, 'def', 1);
+	}
+	
+	# deleteWebhook
+	public function delWebhook ($response = 'def') {
+		return $this->request($this->api('deleteWebhook'), 0, 'def', $response);
+	}
+	
 	# logOut
 	public function logOut () {
 		return $this->request($this->api('logOut'), 0, 'def', 1);
