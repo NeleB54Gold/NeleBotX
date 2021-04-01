@@ -37,7 +37,7 @@ class NeleBotX
 		$this->channel = $this->loadChannel();
 		
 		# Stop script for banned chats
-		if (!$this->v->isAdmin() and ($this->user['ban'] or $this->group['ban'] or $this->channel['ban'])) return $this->response = ['ok' => false, 'error_code' => 200, 'description' => 'Banned from the Bot'];
+		if (!$this->v->isAdmin() and ($this->user['ban'] or $this->group['ban'] or $this->channel['ban'])) return $this->response = ['ok' => false, 'error_code' => 429, 'description' => 'Banned from the Bot'];
 		
 		# AntiFlood System
 		if ($this->configs['redis']['status'] and $this->configs['redis']['antiflood']['status']) {
