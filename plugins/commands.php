@@ -15,7 +15,7 @@ if ($v->command == 'data') {
 	# Private chat with Bot
 	if ($v->command == 'performance') {
 		$end_time = microtime(true);
-		$exec_time = ($end_time - $start_time) * 60; // Microseconds to milliseconds
+		$exec_time = ($end_time - $start_time) * 1000; // Microseconds to milliseconds
 		$bot->sendMessage($v->chat_id, $bot->bold('Ziumm!') . PHP_EOL . 'Only ' . round($exec_time, 4) . ' milliseconds to execute this script!');
 	} elseif ($v->isAdmin() and strpos($v->command, 'ping') === 0) {
 		$times[] = microtime(true);
@@ -29,9 +29,9 @@ if ($v->command == 'data') {
 			$times[] = microtime(true);
 		}
 		foreach ($times as $k => $time) {
-			if ($k !== 0) $pings .= round(($time - $times[$k - 1]) * 60, 2) . ' milliseconds' . PHP_EOL; // Microseconds to milliseconds
+			if ($k !== 0) $pings .= round(($time - $times[$k - 1]) * 1000, 2) . ' milliseconds' . PHP_EOL; // Microseconds to milliseconds
 		}
-		$bot->sendMessage($v->chat_id, $pings . PHP_EOL . $bot->bold('Average: ') . round((((end($times) - $times[0]) / $max) * 60), 2) . ' milliseconds');
+		$bot->sendMessage($v->chat_id, $pings . PHP_EOL . $bot->bold('Average: ') . round((((end($times) - $times[0]) / $max) * 1000), 2) . ' milliseconds');
 	} elseif ($v->command == 'start' or $v->query_data == 'start') {
 		if ($bot->configs['database']['status'] and $user['status'] !== 'started') $db->setStatus($v->user_id, 'started');
 		$buttons[] = [$bot->createInlineButton('📥 Download NeleBot X!', 'https://t.me/NeleBotX', 'url')];
