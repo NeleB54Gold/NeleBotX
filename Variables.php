@@ -110,7 +110,7 @@ class Variables
 		$this->text = $Message['text'];
 		if (empty($this->configs['commands_alias'])) $this->configs['commands_alias'] = ['/'];
 		if (in_array($this->text[0], $this->configs['commands_alias'])) {
-			$this->command = substr(explode('@', $this->text, 2)[0], 1);
+			$this->command = substr($this->text, 1);
 		}
 		$this->entities = $Message['entities'];
 		$this->varAnimation($Message['animation']);
