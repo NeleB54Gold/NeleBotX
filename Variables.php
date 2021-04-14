@@ -129,7 +129,7 @@ class Variables
 		$this->varVenue($Message['venue']);
 		$this->varLocation($Message['location']);
 		$this->varNewMembers($Message['new_chat_members']);
-		$this->varLeftMember($Message['left_chat_members']);
+		$this->varLeftMember($Message['left_chat_member']);
 		$this->new_chat_title = $Message['new_chat_title'];
 		$this->new_chat_photo = $Message['new_chat_photo'];
 		$this->delete_chat_photo = $Message['delete_chat_photo'];
