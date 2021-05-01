@@ -98,7 +98,7 @@ class Variables
 		$this->varChat($Message['chat']);
 		$this->sender_chat = $Message['sender_chat'];
 		$this->varForwardUser($Message['forward_from']);
-		$this->varForwardChat($Message['forward_chat']);
+		$this->varForwardChat($Message['forward_from_chat']);
 		$this->forward_signature = $Message['forward_signature'];
 		$this->forward_sender_chat = $Message['forward_sender_chat'];
 		$this->forward_date = $Message['forward_date'];
