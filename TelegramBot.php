@@ -138,7 +138,7 @@ class TelegramBot
 	}
 
 	# copyMessage
-	public function copyMessage ($chat_id, $from_id, $id, $caption = 0, $buttons = 0, $parse = 'def', $preview = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function copyMessage ($chat_id, $from_id, $id, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'from_chat_id'	=> $from_id,
