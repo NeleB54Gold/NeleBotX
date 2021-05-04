@@ -11,6 +11,112 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 		}
 		$bot->sendMessage($v->chat_id, $t);
 		die;
+	} elseif ($v->command == 'broadcast' or strpos($v->query_data, 'broadcast') === 0) {
+		if ($configs['redis']['status']) {
+			if ($rget = $db->rget('NBXBC-' . $v->user_id)) {
+				$settings = json_decode($rget, 1);
+			} else {
+				$settings = [
+					'tables'					=> [
+						'users'		=> 1,
+						'groups'	=> 1,
+						'channels'	=> 1
+					],
+					'disable_notification'		=>	0,
+					'disable_web_page_preview'	=>	0
+				];
+			}
+			$reverse = [1, 0];
+			$notifemoji = ['🔔', '🔕'];
+			$webpremoji = ['🖇', '❌'];
+			$databemoji = ['❌', '📨'];
+			if (isset($v->query_data) and strpos($v->query_data, 'broadcast-') === 0) {
+				$e = explode('-', $v->query_data);
+				if ($e[1] == 1) {
+					$table = array_keys($settings['tables'])[$e[2]];
+					$settings['tables'][$table] = $reverse[round($settings['tables'][$table])];
+				} elseif ($e[1] == 2) {
+					$settings['disable_notification'] = $reverse[round($settings['disable_notification'])];
+				} elseif ($e[1] == 3) {
+					$settings['disable_web_page_preview'] = $reverse[round($settings['disable_web_page_preview'])];
+				}
+			}
+			$db->rset('NBXBC-' . $v->user_id, json_encode($settings), (60 * 5));
+			if (!$t) {
+				$notification = '';
+				$t = $bot->bold('📨 Broadcast') . PHP_EOL . $bot->italic('Send your message to broadcast on the bot...');
+				$buttons = [
+					[$bot->createInlineButton($databemoji[round($settings['tables']['users'])] . ' Users', 'broadcast-1-0'), $bot->createInlineButton($databemoji[round($settings['tables']['groups'])] . ' Groups', 'broadcast-1-1'), $bot->createInlineButton($databemoji[round($settings['tables']['channels'])] . ' Channels', 'broadcast-1-2')],
+					[$bot->createInlineButton($notifemoji[round($settings['disable_notification'])] . ' Notification sound', 'broadcast-2'), $bot->createInlineButton($webpremoji[round($settings['disable_web_page_preview'])] . ' Link Preview', 'broadcast-3')],
+					[$bot->createInlineButton('❎ Close', 'management-1')]
+				];
+			}
+		} else {
+			$t = 'Broadcast is available with redis only!';
+		}
+		if ($v->query_id) {
+			$bot->editText($v->chat_id, $v->message_id, $t, $buttons);
+			$bot->answerCBQ($v->query_id, '', false);
+		} else {
+			$bot->sendMessage($v->chat_id, $t, $buttons);
+			$bot->deleteMessage($v->chat_id, $v->message_id);
+		}
+		die;
+	} elseif ($rget = $db->rget('NBXBC-' . $v->user_id) and !$v->query_data and !$v->command) {
+		$settings = json_decode($rget, 1);
+		$bot->editConfigs('response', 1);
+		$bot->editConfigs('disable_notification', $settings['disable_notification']);
+		$bot->editConfigs('disable_web_page_preview', $settings['disable_web_page_preview']);
+		if ($v->text) {
+			$m = $bot->sendMessage($v->chat_id, $v->text, $v->update['message']['reply_markup']['inline_keyboard'], $v->entities);
+		} else {
+			$m = $bot->copyMessage($v->chat_id, $v->chat_id, $v->message_id, 0, $v->update['message']['reply_markup']['inline_keyboard']);
+		}
+		if ($m['ok']) {
+			$bm = $bot->sendMessage($v->chat_id, 'Checking databases...');
+			$chats = [];
+			foreach ($settings['tables'] as $table => $status) {
+				if ($status) {
+					$fromt = $db->query('SELECT id FROM ' . $table, [], 2);
+					if ($fromt[0]['id']) $chats = array_merge($chats, $fromt);
+				}
+			}
+			$bot->editConfigs('response', 0);
+			fastcgi_finish_request();
+			if (empty($chats)) {
+				$bot->editText($v->chat_id, $bm['result']['message_id'], 'There is no chat for broadcast!');
+			} else {
+				$db->rdel('NBXBC-' . $v->user_id);
+				$bot->editText($v->chat_id, $bm['result']['message_id'], 'Forwarded to ' . 0 . '/' . round(count($chats)) . ' chats...');
+				$start_time = time();
+				$xtime = $start_time + 2;
+				foreach ($chats as $chat) {
+					if ($v->text) {
+						$bot->sendMessage($chat['id'], $v->text, $v->update['message']['reply_markup']['inline_keyboard'], $v->entities);
+					} else {
+						$bot->copyMessage($chat['id'], $v->chat_id, $v->message_id, 0, $v->update['message']['reply_markup']['inline_keyboard']);
+					}
+					$chatcount += 1;
+					if ($xtime <= time()) {
+						$bot->editText($v->chat_id, $bm['result']['message_id'], 'Forwarded to ' . round($chatcount) . '/' . round(count($chats)) . ' chats...');
+						$xtime = time() + 5;
+					}
+				}
+				$total_time = time() - $start_time;
+				sleep(1);
+				if ($total_time < 60) {
+					$time_total = round($total_time) . ' seconds';
+				} else {
+					$minutes = explode('.', round($total_time / 60, 1))[0];
+					$seconds = $total_time - ($minutes * 60);
+					$time_total = $minutes . ' minutes and ' . $seconds . ' seconds';
+				}
+				$bot->editText($v->chat_id, $bm['result']['message_id'], 'Forwarded to ' . round($chatcount) . ' chats in ' . $time_total . '!');
+			}
+		} else {
+			$bot->sendMessage($v->chat_id, 'Telegram Error: ' . $bot->code($m['description'], 1));
+		}
+		die;
 	} elseif ($v->command == 'management' or strpos($v->query_data, 'management') === 0) {
 		if (isset($v->query_data) and strpos($v->query_data, 'management-') === 0) {
 			$e = explode('-', $v->query_data);
