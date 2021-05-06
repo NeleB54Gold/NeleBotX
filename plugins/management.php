@@ -122,6 +122,7 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 			$e = explode('-', $v->query_data);
 			if ($e[1] == 1) {
 				# Close management panel
+				if ($configs['redis']['status'] and $db->rget('NBXBC-' . $v->user_id)) $db->rdel('NBXBC-' . $v->user_id);
 				$bot->deleteMessage($v->chat_id, $v->message_id);
 				$bot->answerCBQ($v->query_id);
 				die;
