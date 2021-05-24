@@ -60,7 +60,7 @@ class Database
 	}
 	
 	# Redis set
-	public function rset ($key, $value, $time = 0) {
+	public function rset ($key, $value, $time = null) {
 		if ($this->redis) {
 			try {
 				return $this->redis->set($key, $value, $time);
