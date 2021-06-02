@@ -457,6 +457,12 @@ class Variables
 		$this->varChat($ChatMemberUpdated['chat']);
 		$this->date = $ChatMemberUpdated['date'];
 		$this->varChatMember($ChatMemberUpdated['new_chat_member']);
+		if (in_array($ChatMemberUpdated['old_chat_member']['status'], ['left', 'kicked']) and in_array($ChatMemberUpdated['new_chat_member']['status'], ['member', 'administrator'])) {
+			$this->varNewMembers([$ChatMemberUpdated['new_chat_member']['user']]);
+		}
+		if (in_array($ChatMemberUpdated['new_chat_member']['status'], ['left', 'kicked']) and in_array($ChatMemberUpdated['old_chat_member']['status'], ['member', 'administrator'])) {
+			$this->varLeftMember($ChatMemberUpdated['new_chat_member']['user']);
+		}
 		$this->invite_link = $ChatInviteLink['invite_link'];
 	}
 
