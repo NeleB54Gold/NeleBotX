@@ -51,8 +51,8 @@ class Variables
 	}
 	
 	public function isOwner($id = 'def') {
-		if ($id === 'def' and isset($this->administrators[$id]) and $this->administrators[$id]['status'] == 'creator') {
-			return in_array($this->user_id, $this->configs['admins']);
+		if ($id === 'def' and isset($this->administrators[$this->user_id]) and $this->administrators[$this->user_id]['status'] == 'creator') {
+			return 1;
 		} elseif (isset($this->administrators[$id]) and $this->administrators[$id]['status'] == 'creator') {
 			return 1;
 		} else {
@@ -61,8 +61,8 @@ class Variables
 	}
 	
 	public function isStaff($id = 'def') {
-		if ($id === 'def' and isset($this->administrators[$id])) {
-			return in_array($this->user_id, $this->configs['admins']);
+		if ($id === 'def' and isset($this->administrators[$this->user_id])) {
+			return 1;
 		} elseif (isset($this->administrators[$id])) {
 			return 1;
 		} else {
@@ -73,7 +73,7 @@ class Variables
 	public function varChatAdministrators ($ChatAdministrators) {
 		if (empty($ChatAdministrators)) return;
 		foreach ($ChatAdministrators as $Administrator) {
-			$this->administrators[$Administrator['user']['id']] = $Administrators;
+			$this->administrators[$Administrator['user']['id']] = $Administrator;
 		}
 	}
 	
