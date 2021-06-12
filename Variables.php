@@ -56,7 +56,7 @@ class Variables
 		} elseif (isset($this->administrators[$id]) and $this->administrators[$id]['status'] == 'creator') {
 			return 1;
 		} else {
-			return in_array($id, $this->configs['admins']);
+			return 0;
 		}
 	}
 	
