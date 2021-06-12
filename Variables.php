@@ -42,11 +42,38 @@ class Variables
 
 	public function isAdmin($id = 'def') {
 		if ($id === 'def') {
-			return $this->is_admin = in_array($this->user_id, $this->configs['admins']);
+			return in_array($this->user_id, $this->configs['admins']);
 		} elseif (!is_numeric($id)) {
 			return 0;
 		} else {
 			return in_array($id, $this->configs['admins']);
+		}
+	}
+	
+	public function isOwner($id = 'def') {
+		if ($id === 'def' and isset($this->administrators[$id]) and $this->administrators[$id]['status'] == 'creator') {
+			return in_array($this->user_id, $this->configs['admins']);
+		} elseif (isset($this->administrators[$id]) and $this->administrators[$id]['status'] == 'creator') {
+			return 1;
+		} else {
+			return in_array($id, $this->configs['admins']);
+		}
+	}
+	
+	public function isStaff($id = 'def') {
+		if ($id === 'def' and isset($this->administrators[$id])) {
+			return in_array($this->user_id, $this->configs['admins']);
+		} elseif (isset($this->administrators[$id])) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	
+	public function varChatAdministrators ($ChatAdministrators) {
+		if (empty($ChatAdministrators)) return;
+		foreach ($ChatAdministrators as $Administrator) {
+			$this->administrators[$Administrator['user']['id']] = $Administrators;
 		}
 	}
 	
