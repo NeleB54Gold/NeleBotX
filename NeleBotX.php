@@ -93,6 +93,7 @@ class NeleBotX
 					$this->db->query("UPDATE groups SET admins = ?, last_seen = ? WHERE id = ?", [json_encode($q['admins']), $q['last_seen'], $q['id']]);
 				}
 			}
+			$this->v->varChatAdministrators($q['admins']);
 			return $q;
 		}
 		return $this->v->getGroup();
@@ -112,6 +113,7 @@ class NeleBotX
 					$this->db->query("UPDATE channels SET admins = ?, last_seen = ? WHERE id = ?", [json_encode($q['admins']), $q['last_seen'], $q['id']]);
 				}
 			}
+			$this->v->varChatAdministrators($q['admins']);
 			return $q;
 		}
 		return $this->v->getChannel();
