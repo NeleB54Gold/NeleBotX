@@ -900,7 +900,7 @@ class TelegramBot
 		$args = [
 			'remove_keyboard'	=> 1
 		];
-		if ($selective) $args['selective'];
+		if ($selective) $args['selective'] = true;
 		return $args;
 	}
 
