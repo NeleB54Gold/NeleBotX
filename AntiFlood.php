@@ -18,6 +18,7 @@ class AntiFlood {
 		$this->rbkey = 'NeleBotX-AF-' . $id . '-ban';
 		if ($db->rget($this->rbkey)) return $this->banned = 1;
 		$db->rladd($this->rkey, time());
+		$db->redis->expire($this->rkey, 60);
 		if (!empty($this->updates = $db->rlget($this->rkey))) {
 			foreach ($this->updates as $k => $time) {
 				if ($time <= (time() - $this->seconds)) {
