@@ -145,6 +145,7 @@ class Variables
 		$this->varDocument($Message['document']);
 		$this->varPhoto($Message['photo']);
 		$this->varSticker($Message['sticker']);
+		$this->varContact($Message['contact']);
 		$this->varVideo($Message['video']);
 		$this->varVideoNote($Message['video_note']);
 		$this->varVoice($Message['voice']);
