@@ -332,10 +332,9 @@ class Database
 				if (!isset($q['id'])) {
 					return ['error' => 'Error to load chat info', 'INSERT' => $i];
 				}
-			} elseif (isset($chat['title']) and ($user['title'] !== $q['title'] or $q['last_seen'] <= (time() - 60 * 60))) {
+			} elseif (isset($chat['title']) and $user['title'] !== $q['title']) {
 				$q['title'] = $chat['title'];
-				$q['last_seen'] = time();
-				$this->query('UPDATE groups SET title = ?, last_seen = ? WHERE id = ?', [$chat['title'], $q['last_seen'], $chat['id']]);
+				$this->query('UPDATE groups SET title = ? WHERE id = ?', [$chat['title'], $chat['id']]);
 			}
 			// Use this json_decode only if you need it! else comment these 2 strings
 			$q['settings'] = json_decode($q['settings'], 1);
@@ -374,10 +373,9 @@ class Database
 				if (!isset($q['id'])) {
 					return ['error' => 'Error to load chat info', 'INSERT' => $i];
 				}
-			} elseif (isset($chat['title']) and ($user['title'] !== $q['title'] or $q['last_seen'] <= (time() - 60 * 60))) {
+			} elseif (isset($chat['title']) and $user['title'] !== $q['title']) {
 				$q['title'] = $chat['title'];
-				$q['last_seen'] = time();
-				$this->query('UPDATE channels SET title = ?, last_seen = ? WHERE id = ?', [$chat['title'], $q['last_seen'], $chat['id']]);
+				$this->query('UPDATE channels SET title = ? WHERE id = ?', [$chat['title'], $chat['id']]);
 			}
 			// Use this json_decode only if you need it! else comment these 2 strings
 			$q['settings'] = json_decode($q['settings'], 1);
