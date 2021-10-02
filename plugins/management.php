@@ -82,6 +82,7 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 				}
 			}
 			$bot->editConfigs('response', 0);
+			ignore_user_abort(1);
 			fastcgi_finish_request();
 			if (empty($chats)) {
 				$bot->editText($v->chat_id, $bm['result']['message_id'], 'There is no chat for broadcast!');
