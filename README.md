@@ -6,6 +6,8 @@
 
 Develop your own Telegram Bot in PHP with NeleBot X!
 
+Updated to Telegram Bot API 5.5!
+
 ### Requirements
 
 - [Local Telegram Bot API](https://github.com/tdlib/telegram-bot-api) or a webhost with SSL to set the Bot [Webhook](https://core.telegram.org/bots/api#setwebhook). *[Required]*
@@ -20,6 +22,6 @@ See the docs [here](https://neleb54gold.github.io/NeleBotX/).
 
 ## About NeleBot X
 
-[Telegram Channel](https://t.me/NeleBotX)
+[📢 Telegram Channel](https://t.me/NeleBotX)
 
-[Telegram Chat](https://t.me/NeleBotXSupport)
+[👥 Telegram Group](https://t.me/NeleBotXSupport)
