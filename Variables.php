@@ -21,11 +21,6 @@ class Variables
 			$this->varMessage($this->update['channel_post']);
 		} elseif ($this->update['edited_channel_post']) {
 			$this->varMessage($this->update['edited_channel_post']);
-		} elseif ($this->update['pre_checkout_query']) {
-		} elseif ($this->update['my_chat_member']) {
-			$this->varChatMemberUpdated($this->update['my_chat_member']);
-		} elseif ($this->update['chat_member']) {
-			$this->varChatMemberUpdated($this->update['chat_member']);
 		} elseif ($this->update['inline_query']) {
 			$this->varInlineQuery($this->update['inline_query']);
 		} elseif ($this->update['chosen_inline_result']) {
@@ -33,7 +28,19 @@ class Variables
 		} elseif ($this->update['callback_query']) {
 			$this->varCallbackQuery($this->update['callback_query']);
 		} elseif ($this->update['shipping_query']) {
+			$this->varShippingQuery($this->update['shipping_query']);
 		} elseif ($this->update['pre_checkout_query']) {
+			$this->varPreCheckoutQuery($this->update['pre_checkout_query']);
+		} elseif ($this->update['poll']) {
+			$this->varPoll($this->update['poll']);
+		} elseif ($this->update['poll_answer']) {
+			$this->varPollAnswer($this->update['poll_answer']);
+		} elseif ($this->update['my_chat_member']) {
+			$this->varChatMemberUpdated($this->update['my_chat_member']);
+		} elseif ($this->update['chat_member']) {
+			$this->varChatMemberUpdated($this->update['chat_member']);
+		} elseif ($this->update['chat_join_request']) {
+			$this->varChatJoinRequest($this->update['chat_join_request']);
 		} else {
 			return $this->response = ['ok' => 0, 'error_code' => 404, 'description' => 'Not Found: unknown update type'];
 		}
@@ -121,23 +128,25 @@ class Variables
 		if (empty($Message)) return;
 		$this->message_id = $Message['message_id'];
 		$this->varUser($Message['from']);
+		$this->sender_chat = $Message['sender_chat'];
 		$this->date = $Message['date'];
 		$this->varChat($Message['chat']);
-		$this->sender_chat = $Message['sender_chat'];
 		$this->varForwardUser($Message['forward_from']);
-		$this->varForwardChat($Message['forward_from_chat']);
+		$this->varForwardChat($Message['forward_chat']);
 		$this->forward_signature = $Message['forward_signature'];
 		$this->forward_sender_chat = $Message['forward_sender_chat'];
 		$this->forward_date = $Message['forward_date'];
+		$this->is_automatic_forward = $Message['is_automatic_forward'];
 		$this->reply_to_message = $Message['reply_to_message'];
 		$this->via_bot = $Message['via_bot'];
 		$this->edit_date = $Message['edit_date'];
+		$this->has_protected_content = $Message['has_protected_content'];
 		$this->media_group_id = $Message['media_group_id'];
 		$this->author_signature = $Message['author_signature'];
 		$this->text = $Message['text'];
 		if (empty($this->configs['commands_alias'])) $this->configs['commands_alias'] = ['/'];
 		if (in_array($this->text[0], $this->configs['commands_alias'])) {
-			$this->command = substr($this->text, 1);
+			$this->command = substr(explode('@', $this->text, 2)[0], 1);
 		}
 		$this->entities = $Message['entities'];
 		$this->varAnimation($Message['animation']);
@@ -145,26 +154,27 @@ class Variables
 		$this->varDocument($Message['document']);
 		$this->varPhoto($Message['photo']);
 		$this->varSticker($Message['sticker']);
-		$this->varContact($Message['contact']);
 		$this->varVideo($Message['video']);
 		$this->varVideoNote($Message['video_note']);
 		$this->varVoice($Message['voice']);
 		$this->caption = $Message['caption'];
 		$this->caption_entities = $Message['caption_entities'];
+		$this->varContact($Message['contact']);
 		$this->varDice($Message['dice']);
 		$this->varGame($Message['game']);
 		$this->varPoll($Message['poll']);
 		$this->varVenue($Message['venue']);
 		$this->varLocation($Message['location']);
-		$this->varNewMembers($Message['new_chat_members']);
-		$this->varLeftMember($Message['left_chat_member']);
+		# Comment these 2 lines if you have enabled the arrival of chat_member updates
+		# $this->varNewMembers($Message['new_chat_members']);
+		# $this->varLeftMember($Message['left_chat_members']);
 		$this->new_chat_title = $Message['new_chat_title'];
 		$this->new_chat_photo = $Message['new_chat_photo'];
 		$this->delete_chat_photo = $Message['delete_chat_photo'];
 		$this->group_chat_created = $Message['group_chat_created'];
 		$this->supergroup_chat_created = $Message['supergroup_chat_created'];
 		$this->channel_chat_created = $Message['channel_chat_created'];
-		$this->message_auto_delete_timer_changed = $Message['message_auto_delete_timer_changed'];
+		$this->varMessageAutoDeleteTimerChanged($Message['message_auto_delete_timer_changed']);
 		$this->migrate_to_chat_id = $Message['migrate_to_chat_id'];
 		$this->migrate_from_chat_id = $Message['migrate_from_chat_id'];
 		$this->pinned_message = $Message['pinned_message'];
@@ -173,7 +183,8 @@ class Variables
 		$this->connected_website = $Message['connected_website'];
 		$this->passport_data = $Message['passport_data'];
 		$this->proximity_alert_triggered = $Message['proximity_alert_triggered'];
-		$this->voice_chat_started = $Message['voice_chat_started'];
+		$this->varVoiceChatScheduled($Message['voice_chat_scheduled']);
+		$this->varVoiceChatStarted($Message['voice_chat_started']);
 		$this->voice_chat_ended = $Message['voice_chat_ended'];
 		$this->voice_chat_participants_invited = $Message['voice_chat_participants_invited'];
 		$this->varInlineKeyboardMarkup($Message['reply_markup']);
@@ -202,7 +213,7 @@ class Variables
 	}
 
 	public function varPhoto ($Photo) {
-		if (empty($Photo)) return;
+		if (!is_array($Photo) or empty($Photo)) return;
 		foreach ($Photo as $PhotoSize) {
 			$this->varPhotoSize($PhotoSize);
 		}
@@ -359,6 +370,31 @@ class Variables
 		$this->proximity_distance = $ProximityAlertTriggered['distance'];
 	}
 
+	public function varMessageAutoDeleteTimerChanged ($MessageAutoDeleteTimerChanged) {
+		if (empty($MessageAutoDeleteTimerChanged)) return;
+		$this->message_auto_delete_time = $MessageAutoDeleteTimerChanged['message_auto_delete_time'];
+	}
+
+	public function varVoiceChatScheduled ($VoiceChatScheduled) {
+		if (empty($VoiceChatScheduled)) return;
+		$this->voice_chat_sceduled = $VoiceChatScheduled['start_date'];
+	}
+
+	public function varVoiceChatStarted ($VoiceChatStarted) {
+		if (empty($VoiceChatStarted)) return;
+		$this->voice_chat_started = true;
+	}
+
+	public function varVoiceChatEnded ($VoiceChatEnded) {
+		if (empty($VoiceChatEnded)) return;
+		$this->voice_chat_ended = $VoiceChatEnded['duration'];
+	}
+
+	public function varVoiceChatParticipantsInvited ($VoiceChatParticipantsInvited) {
+		if (empty($VoiceChatParticipantsInvited)) return;
+		$this->voice_chat_invited = $VoiceChatParticipantsInvited['users'];
+	}
+
 	public function varUserProfilePhotos ($UserProfilePhotos) {
 		if (empty($UserProfilePhotos)) return;
 		$this->user_photos_count = $UserProfilePhotos['total_count'];
@@ -390,6 +426,11 @@ class Variables
 			'request_location'	=> $KeyboardButton['request_location'],
 			'request_poll'		=> $KeyboardButton['request_poll']
 		];
+	}
+
+	public function varKeyboardButtonPollType ($KeyboardButtonPollType) {
+		if (empty($KeyboardButtonPollType)) return;
+		$this->keyboard_poll_type = $KeyboardButtonPollType['type'];
 	}
 
 	public function varReplyKeyboardRemove ($ReplyKeyboardRemove) {
@@ -450,6 +491,11 @@ class Variables
 		$this->photo_uid = $ChatPhoto['big_file_unique_id'];
 	}
 
+	public function varChatInviteLink ($ChatInviteLink) {
+		if (empty($ChatInviteLink)) return;
+		$this->invite_link = $ChatInviteLink;
+	}
+
 	public function varChatMember ($ChatMember) {
 		if (empty($ChatMember)) return;
 		$this->member_id = $ChatMember['user']['id'];
@@ -485,13 +531,16 @@ class Variables
 		$this->varChat($ChatMemberUpdated['chat']);
 		$this->date = $ChatMemberUpdated['date'];
 		$this->varChatMember($ChatMemberUpdated['new_chat_member']);
-		if (in_array($ChatMemberUpdated['old_chat_member']['status'], ['left', 'kicked']) and in_array($ChatMemberUpdated['new_chat_member']['status'], ['member', 'administrator'])) {
-			$this->varNewMembers([$ChatMemberUpdated['new_chat_member']['user']]);
-		}
-		if (in_array($ChatMemberUpdated['new_chat_member']['status'], ['left', 'kicked']) and in_array($ChatMemberUpdated['old_chat_member']['status'], ['member', 'administrator'])) {
-			$this->varLeftMember($ChatMemberUpdated['new_chat_member']['user']);
-		}
-		$this->invite_link = $ChatInviteLink['invite_link'];
+		$this->invite_link = $ChatMemberUpdated['invite_link'];
+	}
+
+	public function varChatJoinRequest ($ChatJoinRequest) {
+		if (empty($ChatJoinRequest)) return;
+		$this->varChat($ChatJoinRequest['chat']);
+		$this->varUser($ChatJoinRequest['from']);
+		$this->date = $ChatJoinRequest['date'];
+		$this->user_bio = $ChatJoinRequest['bio'];
+		$this->invite_link = $ChatJoinRequest['invite_link'];
 	}
 
 	public function varSticker ($Sticker) {
@@ -564,7 +613,7 @@ class Variables
 		return [
 			'id'			=> $this->chat_id,
 			'title'			=> $this->chat_title,
-			'username'		=> $this->chat_username,
+			'username'		=> $this->user_username,
 			'language_code'	=> $this->user_language_code
 		];
 	}
@@ -574,7 +623,7 @@ class Variables
 		return [
 			'id'			=> $this->chat_id,
 			'title'			=> $this->chat_title,
-			'username'		=> $this->chat_username,
+			'username'		=> $this->user_username,
 			'language_code'	=> $this->user_language_code
 		];
 	}

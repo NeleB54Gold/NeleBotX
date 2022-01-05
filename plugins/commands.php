@@ -1,5 +1,5 @@
 <?php
-	
+
 # Ignore inline messages (via @)
 if ($v->via_bot) die;
 
@@ -11,6 +11,8 @@ if ($v->command == 'data') {
 	$bot->sendMessage($v->chat_id, $juser . PHP_EOL . $jgroup . PHP_EOL . $jchannel);
 } elseif ($v->command == 'dump') {
 	$bot->sendMessage($v->chat_id, $bot->code(json_encode($v->update, JSON_PRETTY_PRINT), 1));
+} elseif ($v->command == 'neledump') {
+	$bot->sendMessage($v->chat_id, $bot->code(substr(json_encode($v, JSON_PRETTY_PRINT), 2500, 4096), 1));
 } elseif ($v->chat_type == 'private') {
 	# Private chat with Bot
 	if ($v->command == 'performance') {
@@ -228,7 +230,7 @@ if ($v->update['inline_query']) {
 			$bot->createTextInput(':)')
 		);
 	}
-	$bot->answerIQ($v->id, $results, $sw_text, $sw_arg);
+	$r = $bot->answerIQ($v->id, $results, $sw_text, $sw_arg);
 } elseif ($v->update['chosen_inline_result']) {
 	$bot->sendMessage($v->user_id, 'You have chosed: ' . $v->id);
 }

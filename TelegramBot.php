@@ -83,16 +83,6 @@ class TelegramBot
 		return $this->request($this->api('getMe'), 0, 'def', 1);
 	}
 	
-	# getWebhookInfo
-	public function getWebhook () {
-		return $this->request($this->api('getWebhookInfo'), 0, 'def', 1);
-	}
-	
-	# deleteWebhook
-	public function delWebhook ($response = 'def') {
-		return $this->request($this->api('deleteWebhook'), 0, 'def', $response);
-	}
-	
 	# logOut
 	public function logOut () {
 		return $this->request($this->api('logOut'), 0, 'def', 1);
@@ -122,6 +112,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendMessage'), $args, 'def', $response);
 	}
@@ -133,6 +124,7 @@ class TelegramBot
 			'from_chat_id'	=> $from_id,
 			'message_id'	=> $id
 		];
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('forwardMessage'), $args, 'def', $response);
 	}
@@ -158,7 +150,8 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('copyMessage'), $args, 'def', $response);
 	}
 
@@ -180,6 +173,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendPhoto'), $args, 'def', $response);
 	}
@@ -202,6 +196,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendAudio'), $args, 'def', $response);
 	}
@@ -225,6 +220,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendDocument'), $args, 'def', $response);
 	}
@@ -247,6 +243,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendVideo'), $args, 'def', $response);
 	}
@@ -269,6 +266,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendAnimation'), $args, 'def', $response);
 	}
@@ -291,6 +289,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendVoice'), $args, 'def', $response);
 	}
@@ -306,6 +305,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendVideoNote'), $args, 'def', $response);
 	}
@@ -320,6 +320,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendMediaGroup'), $args, 'def', $response);
 	}
@@ -339,6 +340,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendLocation'), $args, 'def', $response);
 	}
@@ -379,6 +381,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendVenue'), $args, 'def', $response);
 	}
@@ -397,8 +400,37 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
 		return $this->request($this->api('sendContact'), $args, 'def', $response);
+	}
+
+	# sendPoll
+	public function sendPoll ($chat_id, $question, $options, $is_anonymous = true, $type = "regular", $others = [], $response = 'def') {
+		$args = [
+			'chat_id'		=> $chat_id,
+			'question'		=> $question,
+			'options'		=> $options,
+			'is_anonymous'	=> $question,
+			'type'			=> $type
+		];
+		if (!empty($others)) $args = array_merge($args, $others);
+		return $this->request($this->api('sendPoll'), $args, 'def', $response);
+	}
+
+	# sendDice
+	public function sendDice ($chat_id, $dice, $buttons = 0, $reply = 0, $buttonsType = 'inline', $response = 'def') {
+		$args = [
+			'chat_id'	=> $chat_id,
+			'emoji'		=> $dice
+		];
+		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		if ($reply and is_numeric($reply)) {
+			$args['reply_to_message_id'] = $reply;
+			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
+		return $this->request($this->api('sendDice'), $args, 'def', $response);
 	}
 
 	# sendChatAction
@@ -409,7 +441,7 @@ class TelegramBot
 		];
 		return $this->request($this->api('sendChatAction'), $args, 'def', $response);
 	}
-	
+
 	# getUserProfilePhotos
 	public function getUserPhotos ($user_id, $offset = 0, $limit = 100) {
 		$args = [
@@ -419,7 +451,7 @@ class TelegramBot
 		];
 		return $this->request($this->api('getUserProfilePhotos'), $args, 'def', 1);
 	}
-	
+
 	# getFile
 	public function getFile ($file_id) {
 		$args = [
@@ -484,6 +516,24 @@ class TelegramBot
 		return $this->request($this->api('setChatAdministratorCustomTitle'), $args, 'def', $response);
 	}
 	
+	# banChatSenderChat
+	public function banChatSender ($chat_id, $sender_id) {
+		$args = [
+			'chat_id'			=> $chat_id,
+			'sender_chat_id'	=> $sender_id
+		];
+		return $this->request($this->api('banChatSenderChat'), $args, 'def', $response);
+	}
+	
+	# unbanChatSenderChat
+	public function unbanChatSender ($chat_id, $sender_id) {
+		$args = [
+			'chat_id'			=> $chat_id,
+			'sender_chat_id'	=> $sender_id
+		];
+		return $this->request($this->api('unbanChatSenderChat'), $args, 'def', $response);
+	}
+	
 	# setChatPermissions
 	public function setPerms ($chat_id, $permissions, $response = 'def') {
 		$args = [
@@ -529,6 +579,24 @@ class TelegramBot
 			'invite_link'	=> $invite
 		];
 		return $this->request($this->api('revokeChatInviteLink'), $args, 'def', $response);
+	}
+	
+	# approveChatJoinRequest
+	public function approveJoinRequest ($chat_id, $user_id) {
+		$args = [
+			'chat_id'			=> $chat_id,
+			'user_id'			=> $user_id
+		];
+		return $this->request($this->api('approveChatJoinRequest'), $args, 'def', $response);
+	}
+	
+	# declineChatJoinRequest
+	public function declineJoinRequest ($chat_id, $user_id) {
+		$args = [
+			'chat_id'			=> $chat_id,
+			'user_id'			=> $user_id
+		];
+		return $this->request($this->api('declineChatJoinRequest'), $args, 'def', $response);
 	}
 	
 	# setChatPhoto
@@ -667,11 +735,22 @@ class TelegramBot
 	}
 	
 	# setMyCommands
-	public function setCommands ($commands = [], $response = 'def') {
+	public function setCommands ($commands = '[]', $scope = '{"type":"default"}', $lang = '', $response = 'def') {
 		$args = [
-			'commands'	=> json_encode($commands)
+			'commands'		=> $commands,
+			'scope'			=> $scope,
+			'language_code'	=> $lang
 		];
 		return $this->request($this->api('setMyCommands'), $args, 'def', $response);
+	}
+	
+	# deleteMyCommands
+	public function delCommand ($scope = '{"type":"default"}', $lang = '', $response = 'def') {
+		$args = [
+			'scope'			=> $scope,
+			'language_code'	=> $lang
+		];
+		return $this->request($this->api('deleteMyCommands'), $args, 'def', $response);
 	}
 	
 	# getMyCommands

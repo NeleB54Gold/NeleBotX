@@ -16,12 +16,14 @@ $configs = [
 		'allow_sending_w/out_reply'	=> 1,
 		# 6. Send without notification sound	(Optional)	[Bool]
 		'disable_notification'		=> 0,
-		# 7. Commands alias						(Optional)	[Array of Text(Only 1 character)]
-		'commands_alias'			=> ['/'],
+		# 7. Protect contents					(Optional)	[Bool]
+		'protect_content'			=> 0,
+		# 8. Commands alias						(Optional)	[Array of Text(Only 1 character)]
+		'commands_alias'			=> ['/', '!'],
 	
 	# 2. Logging configs
 		# 1. Set the chat ID for Bot logs		(Optional)	[Number]
-		'log_chat'					=> 0,
+		'log_chat'					=> 244432022,
 		# 2. Choose the errors to log			(Optional)	[Array of Number => bool]
 		'log_types'					=> [
 			# https://www.php.net/manual/en/errorfunc.constants.php
@@ -38,7 +40,7 @@ $configs = [
 		# 1. Redis								(Optional)
 		'redis'						=> [
 			# 1. Turn on/off Redis					(Optional)	[Bool]
-			'status'					=> 0,
+			'status'					=> 1,
 			# 2. Select the Redis database			(Optional)	[Number]
 			'database'					=> 1,
 			# 3. Select Redis Server host			(Required)	[Redis Server IP]
@@ -64,11 +66,11 @@ $configs = [
 		# 2. MySQL/SQLite/PostgreSQL			(Optional)
 		'database' 					=> [
 			# 1. Turn on/off the database 			(Optional)	[Bool]
-			'status'					=> 0,
+			'status'					=> 1,
 			# 2. Choose your database				(Required)	[Text: sqlite, mysql, pgsql]
-			'type'						=> 'sqlite',
+			'type'						=> '',
 			# 3. Database name (file for SQLite)	(Required)	[Text]
-			'database_name'				=> 'bot.sql',
+			'database_name'				=> '',
 			# 4. MySQL/PostgreSQL user				(Required for MySQL/PostgreSQL)	[Text]
 			'user'						=> '',
 			# 5. MySQL/PostgreSQL password			(Required for MySQL/PostgreSQL)	[Text]
@@ -94,7 +96,7 @@ $configs = [
 		# 4. Default requests timeout seconds	(Optional)	[Number]
 		'timeout'					=> 2,
 		# 5. NeleBotX Framework version
-		'version'					=> '0.1.0'
+		'version'					=> '1.0.0'
 ];
 
 ?>

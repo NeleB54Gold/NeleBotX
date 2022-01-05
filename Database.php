@@ -60,7 +60,7 @@ class Database
 	}
 	
 	# Redis set
-	public function rset ($key, $value, $time = null) {
+	public function rset ($key, $value, $time = 0) {
 		if ($this->redis) {
 			try {
 				return $this->redis->set($key, $value, $time);
@@ -270,7 +270,7 @@ class Database
 		if (!is_array($user)) return ['error' => 'Bad Request: User must be an array'];
 		if (isset($user['id']) or isset($user['username'])) {
 			if (isset($user['id'])) {
-				if ($user['id'] <= 0 or $user['id'] >= 2147483647) return ['error' => 'Bad Request: id is out of range'];
+				if ($user['id'] <= 0 or $user['id'] >= 18446744073709551615) return ['error' => 'Bad Request: id is out of range'];
 				$q = $this->query('SELECT * FROM users WHERE id = ?', [round($user['id'])], 1);
 			} else {
 				if (strlen($user['username']) > 32) return ['error' => 'Bad Request: username has too many characters'];
@@ -332,9 +332,10 @@ class Database
 				if (!isset($q['id'])) {
 					return ['error' => 'Error to load chat info', 'INSERT' => $i];
 				}
-			} elseif (isset($chat['title']) and $user['title'] !== $q['title']) {
+			} elseif (isset($chat['title']) and ($user['title'] !== $q['title'] or $q['last_seen'] <= (time() - 60 * 60))) {
 				$q['title'] = $chat['title'];
-				$this->query('UPDATE groups SET title = ? WHERE id = ?', [$chat['title'], $chat['id']]);
+				$q['last_seen'] = time();
+				$this->query('UPDATE groups SET title = ?, last_seen = ? WHERE id = ?', [$chat['title'], $q['last_seen'], $chat['id']]);
 			}
 			// Use this json_decode only if you need it! else comment these 2 strings
 			$q['settings'] = json_decode($q['settings'], 1);
@@ -373,9 +374,10 @@ class Database
 				if (!isset($q['id'])) {
 					return ['error' => 'Error to load chat info', 'INSERT' => $i];
 				}
-			} elseif (isset($chat['title']) and $user['title'] !== $q['title']) {
+			} elseif (isset($chat['title']) and ($user['title'] !== $q['title'] or $q['last_seen'] <= (time() - 60 * 60))) {
 				$q['title'] = $chat['title'];
-				$this->query('UPDATE channels SET title = ? WHERE id = ?', [$chat['title'], $chat['id']]);
+				$q['last_seen'] = time();
+				$this->query('UPDATE channels SET title = ?, last_seen = ? WHERE id = ?', [$chat['title'], $q['last_seen'], $chat['id']]);
 			}
 			// Use this json_decode only if you need it! else comment these 2 strings
 			$q['settings'] = json_decode($q['settings'], 1);
