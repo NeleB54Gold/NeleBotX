@@ -281,12 +281,12 @@ class Variables
 
 	public function varVideoNote ($VideoNote) {
 		if (empty($VideoNote)) return;
-		$this->video_note_id = $Video['file_id'];
-		$this->video_note_uid = $Video['file_unique_id'];
-		$this->video_note_length = $Video['length'];
-		$this->video_note_duration = $Video['duration'];
-		$this->video_note_thumb = $Video['thumb'];
-		$this->video_note_size = $Video['file_size'];
+		$this->video_note_id = $VideoNote['file_id'];
+		$this->video_note_uid = $VideoNote['file_unique_id'];
+		$this->video_note_length = $VideoNote['length'];
+		$this->video_note_duration = $VideoNote['duration'];
+		$this->video_note_thumb = $VideoNote['thumb'];
+		$this->video_note_size = $VideoNote['file_size'];
 	}
 
 	public function varVoice ($Voice) {
@@ -377,7 +377,7 @@ class Variables
 
 	public function varVoiceChatScheduled ($VoiceChatScheduled) {
 		if (empty($VoiceChatScheduled)) return;
-		$this->voice_chat_sceduled = $VoiceChatScheduled['start_date'];
+		$this->voice_chat_scheduled = $VoiceChatScheduled['start_date'];
 	}
 
 	public function varVoiceChatStarted ($VoiceChatStarted) {
