@@ -6,7 +6,7 @@
 set_error_handler("errorHandler");
 register_shutdown_function("shutdownHandler");
 
-function errorHandler($error_type, $error, $error_file, $error_line, $error_context) {
+function errorHandler($error_type, $error, $error_file, $error_line, $error_context = '') {
 	global $bot;
 	
 	if (isset($bot) and $bot->configs['log_chat'] and $error = error_get_last()) {
