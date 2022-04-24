@@ -1379,6 +1379,63 @@ class TelegramBot
 		return $args;
 	}
 
+	# SendInvoices 
+	public function sendInvoice($chat_id, string $title, string $description, string $payload, string $provider_token, string $currency, array $prices) {
+		$args = [
+			'chat_id'        => $chat_id,
+			'title'          => $title,
+			'description'    => $description,
+			'payload'        => $payload,
+			'provider_token' => $provider_token,
+			'currency'       => $currency,
+			'prices'         => json_encode($prices)
+		];
+	
+		if ($reply and is_numeric($reply)) {
+			$args['reply_to_message_id'] = $reply;
+			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+		}
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		return $this->request($this->api('sendInvoice'), $args, 'def', $response);
+	}
+
+	# AnswerShippingQuery
+	public function answerShippingQuery(string $shipping_query_id, bool $ok, array $shipping_options = null, string $error_message = null) {
+		$args = [
+			'shipping_query_id' => $shipping_query_id,
+			'ok'                => $ok
+		];
+	
+		if ($shipping_options !== null) {
+			$args['shipping_options'] = json_encode($shipping_options);
+		}
+	
+		if ($error_message !== null) {
+			$args['error_message'] = $error_message;
+		}
+	
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		return $this->request($this->api('sendInvoice'), $args, 'def', $response);
+	}
+	
+	# AnswerPreCheckoutQuery
+	public function answerPreCheckoutQuery(string $pre_checkout_query_id, bool $ok, string $error_message = null) {
+		$args = [
+			'pre_checkout_query_id' => $pre_checkout_query_id,
+			'ok'                    => $ok
+		];
+	
+		if ($error_message !== null) {
+			$args['error_message'] = $error_message;
+		}
+	
+		if ($this->configs['protect_content']) $args['protect_content'] = 1;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		return $this->request($this->api('sendInvoice'), $args, 'def', $response);
+	}
+
 	/*		Secondary Bot API function		*/
 	
 	# Valid Parse Mode
