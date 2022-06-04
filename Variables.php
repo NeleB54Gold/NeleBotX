@@ -383,24 +383,24 @@ class Variables
 		$this->message_auto_delete_time = $MessageAutoDeleteTimerChanged['message_auto_delete_time'];
 	}
 
-	public function varVoiceChatScheduled ($VoiceChatScheduled) {
-		if (empty($VoiceChatScheduled)) return;
-		$this->voice_chat_sceduled = $VoiceChatScheduled['start_date'];
+	public function varVideoChatScheduled ($VideoChatScheduled) {
+		if (empty($VideoChatScheduled)) return;
+		$this->video_chat_sceduled = $VideoChatScheduled['start_date'];
 	}
 
 	public function varVideoChatStarted ($VideoChatStarted) {
 		if (empty($VideoChatStarted)) return;
-		$this->voice_chat_started = true;
+		$this->video_chat_started = true;
 	}
 
-	public function varVoiceChatEnded ($VoiceChatEnded) {
-		if (empty($VoiceChatEnded)) return;
-		$this->voice_chat_ended = $VoiceChatEnded['duration'];
+	public function varVideoChatEnded ($VideoChatEnded) {
+		if (empty($VideoChatEnded)) return;
+		$this->video_chat_ended = $VideoChatEnded['duration'];
 	}
 
-	public function varVoiceChatParticipantsInvited ($VoiceChatParticipantsInvited) {
-		if (empty($VoiceChatParticipantsInvited)) return;
-		$this->voice_chat_invited = $VoiceChatParticipantsInvited['users'];
+	public function varVideoChatParticipantsInvited ($VideoChatParticipantsInvited) {
+		if (empty($VideoChatParticipantsInvited)) return;
+		$this->voice_chat_invited = $VideoChatParticipantsInvited['users'];
 	}
 
 	public function varUserProfilePhotos ($UserProfilePhotos) {
