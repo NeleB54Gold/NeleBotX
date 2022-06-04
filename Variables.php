@@ -132,9 +132,10 @@ class Variables
 		$this->date = $Message['date'];
 		$this->varChat($Message['chat']);
 		$this->varForwardUser($Message['forward_from']);
-		$this->varForwardChat($Message['forward_from_chat']);
+		$this->varForwardChat($Message['forward_chat']);
 		$this->forward_signature = $Message['forward_signature'];
 		$this->forward_sender_chat = $Message['forward_sender_chat'];
+		$this->is_automatic_forward	= $Message['is_automatic_forward'];
 		$this->forward_date = $Message['forward_date'];
 		$this->is_automatic_forward = $Message['is_automatic_forward'];
 		$this->reply_to_message = $Message['reply_to_message'];
@@ -183,10 +184,11 @@ class Variables
 		$this->connected_website = $Message['connected_website'];
 		$this->passport_data = $Message['passport_data'];
 		$this->proximity_alert_triggered = $Message['proximity_alert_triggered'];
-		$this->varVoiceChatScheduled($Message['voice_chat_scheduled']);
-		$this->varVoiceChatStarted($Message['voice_chat_started']);
-		$this->voice_chat_ended = $Message['voice_chat_ended'];
-		$this->voice_chat_participants_invited = $Message['voice_chat_participants_invited'];
+		$this->varVideoChatScheduled($Message['video_chat_scheduled']);
+		$this->varVideoChatStarted($Message['video_chat_started']);
+		$this->video_chat_ended = $Message['video_chat_ended'];
+		$this->video_chat_participants_invited = $Message['video_chat_participants_invited'];
+		$this->varWebAppData($Message['web_app_data']);
 		$this->varInlineKeyboardMarkup($Message['reply_markup']);
 	}
 
@@ -281,12 +283,12 @@ class Variables
 
 	public function varVideoNote ($VideoNote) {
 		if (empty($VideoNote)) return;
-		$this->video_note_id = $VideoNote['file_id'];
-		$this->video_note_uid = $VideoNote['file_unique_id'];
-		$this->video_note_length = $VideoNote['length'];
-		$this->video_note_duration = $VideoNote['duration'];
-		$this->video_note_thumb = $VideoNote['thumb'];
-		$this->video_note_size = $VideoNote['file_size'];
+		$this->video_note_id = $Video['file_id'];
+		$this->video_note_uid = $Video['file_unique_id'];
+		$this->video_note_length = $Video['length'];
+		$this->video_note_duration = $Video['duration'];
+		$this->video_note_thumb = $Video['thumb'];
+		$this->video_note_size = $Video['file_size'];
 	}
 
 	public function varVoice ($Voice) {
@@ -363,6 +365,12 @@ class Variables
 		$this->google_place_type = $Venue['google_place_type'];
 	}
 
+	public function varWebAppData ($WebAppData) {
+		if (empty($WebAppData)) return;
+		$this->webapp_data = $WebAppData['data'];
+		$this->webapp_text = $WebAppData['button_text'];
+	}
+
 	public function varProximityAlertTriggered ($ProximityAlertTriggered) {
 		if (empty($ProximityAlertTriggered)) return;
 		$this->proximity_traveler = $ProximityAlertTriggered['traveler'];
@@ -377,11 +385,11 @@ class Variables
 
 	public function varVoiceChatScheduled ($VoiceChatScheduled) {
 		if (empty($VoiceChatScheduled)) return;
-		$this->voice_chat_scheduled = $VoiceChatScheduled['start_date'];
+		$this->voice_chat_sceduled = $VoiceChatScheduled['start_date'];
 	}
 
-	public function varVoiceChatStarted ($VoiceChatStarted) {
-		if (empty($VoiceChatStarted)) return;
+	public function varVideoChatStarted ($VideoChatStarted) {
+		if (empty($VideoChatStarted)) return;
 		$this->voice_chat_started = true;
 	}
 
@@ -424,7 +432,8 @@ class Variables
 			'text'				=> $KeyboardButton['text'],
 			'request_contact'	=> $KeyboardButton['request_contact'],
 			'request_location'	=> $KeyboardButton['request_location'],
-			'request_poll'		=> $KeyboardButton['request_poll']
+			'request_poll'		=> $KeyboardButton['request_poll'],
+			'web_app'			=> $KeyboardButton['web_app']
 		];
 	}
 
@@ -451,6 +460,7 @@ class Variables
 			'url'								=> $InlineKeyboardButton['url'],
 			'login_url'							=> $InlineKeyboardButton['login_url'],
 			'callback_data'						=> $InlineKeyboardButton['callback_data'],
+			'web_app'							=> $InlineKeyboardButton['web_app'],
 			'switch_inline_query'				=> $InlineKeyboardButton['switch_inline_query'],
 			'switch_inline_query_current_chat'	=> $InlineKeyboardButton['switch_inline_query_current_chat'],
 			'callback_game'						=> $InlineKeyboardButton['callback_game'],
@@ -510,7 +520,7 @@ class Variables
 		$this->member_perms_post = $ChatMember['can_post_messages'];
 		$this->member_perms_edit_post = $ChatMember['can_edit_messages'];
 		$this->member_perms_delete = $ChatMember['can_delete_messages'];
-		$this->member_perms_manage_voice = $ChatMember['can_manage_voice_chats'];
+		$this->member_perms_manage_voice = $ChatMember['can_manage_video_chats'];
 		$this->member_perms_restrict = $ChatMember['can_restrict_members'];
 		$this->member_perms_promote = $ChatMember['can_promote_members'];
 		$this->member_perms_change_info = $ChatMember['can_change_info'];
@@ -549,6 +559,7 @@ class Variables
 		$this->sticker_uid = $Sticker['file_unique_id'];
 		$this->sticker_witdh = $Sticker['width'];
 		$this->sticker_height = $Sticker['height'];
+		$this->sticker_video = $Sticker['is_video'];
 		$this->sticker_animated = $Sticker['is_animated'];
 		$this->sticker_thumb = $Sticker['thumb'];
 		$this->sticker_emoji = $Sticker['emoji'];
@@ -562,6 +573,7 @@ class Variables
 		$this->stickers = $StickerSet['name'];
 		$this->stickers_name = $StickerSet['title'];
 		$this->stickers_animated = $StickerSet['is_animated'];
+		$this->stickers_video = $StickerSet['is_video'];
 		$this->stickers_contains_masks = $StickerSet['contains_masks'];
 		$this->stickers_thumb = $StickerSet['thumb'];
 	}
@@ -635,7 +647,7 @@ class Variables
 			'can_manage_chat',
 			'can_change_info',
 			'can_delete_messages',
-			'can_manage_voice_chats',
+			'can_manage_video_chats',
 			'can_invite_users',
 			'can_restrict_members',
 			'can_pin_messages',

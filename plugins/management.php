@@ -1,7 +1,8 @@
 <?php
 
-# Commands for Bot administrators
+# Commands for Bot administrators only
 if ($v->chat_type == 'private' and $v->isAdmin()) {
+	# Database Setup
 	if ($v->command == 'setup') {
 		if ($db) {
 			$r = $db->setup();
@@ -11,7 +12,9 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 		}
 		$bot->sendMessage($v->chat_id, $t);
 		die;
-	} elseif ($v->command == 'broadcast' or strpos($v->query_data, 'broadcast') === 0) {
+	}
+	# Broadcast command (require Redis)
+	elseif ($v->command == 'broadcast' or strpos($v->query_data, 'broadcast') === 0) {
 		if ($configs['redis']['status']) {
 			if ($rget = $db->rget('NBXBC-' . $v->user_id)) {
 				$settings = json_decode($rget, 1);
@@ -62,7 +65,9 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 			$bot->deleteMessage($v->chat_id, $v->message_id);
 		}
 		die;
-	} elseif ($rget = $db->rget('NBXBC-' . $v->user_id) and !$v->query_data and !$v->command) {
+	}
+	# Broadcast send
+	elseif ($rget = $db->rget('NBXBC-' . $v->user_id) and !$v->query_data and !$v->command) {
 		$settings = json_decode($rget, 1);
 		$bot->editConfigs('response', 1);
 		$bot->editConfigs('disable_notification', $settings['disable_notification']);
@@ -117,7 +122,9 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 			$bot->sendMessage($v->chat_id, 'Telegram Error: ' . $bot->code($m['description'], 1));
 		}
 		die;
-	} elseif ($v->command == 'management' or strpos($v->query_data, 'management') === 0) {
+	}
+	# Management command
+	elseif ($v->command == 'management' or strpos($v->query_data, 'management') === 0) {
 		if (isset($v->query_data) and strpos($v->query_data, 'management-') === 0) {
 			$e = explode('-', $v->query_data);
 			if ($e[1] == 1) {
@@ -669,7 +676,9 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 			$bot->deleteMessage($v->chat_id, $v->message_id);
 		}
 		die;
-	} elseif (strpos($v->command, 'ban') === 0) {
+	} 
+	# Ban command
+	elseif (strpos($v->command, 'ban') === 0) {
 		if (strpos($v->command, 'ban ') === 0) {
 			$e = explode(' ', $v->command, 2);
 			if (is_numeric($e[1])) {
@@ -702,7 +711,9 @@ if ($v->chat_type == 'private' and $v->isAdmin()) {
 		}
 		$bot->sendMessage($v->chat_id, $t);
 		die;
-	} elseif (strpos($v->command, 'unban') === 0) {
+	}
+	#Unban command
+	elseif (strpos($v->command, 'unban') === 0) {
 		if (strpos($v->command, 'unban ') === 0) {
 			$e = explode(' ', $v->command, 2);
 			if (is_numeric($e[1])) {
