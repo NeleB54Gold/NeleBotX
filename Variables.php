@@ -92,6 +92,7 @@ class Variables
 		$this->user_last_name = $User['last_name'];
 		$this->user_username = $User['username'];
 		$this->user_language_code = $User['language_code'];
+		$this->user_is_premium = $User['is_premium'];
 	}
 	
 	public function varForwardUser ($User) {
@@ -564,6 +565,7 @@ class Variables
 		$this->sticker_thumb = $Sticker['thumb'];
 		$this->sticker_emoji = $Sticker['emoji'];
 		$this->sticker_set = $Sticker['set_name'];
+		$this->sticker_premium = $Sticker['premium_animation'];
 		$this->sticker_mask = $Sticker['mask_position'];
 		$this->sticker_size = $Sticker['file_size'];
 	}

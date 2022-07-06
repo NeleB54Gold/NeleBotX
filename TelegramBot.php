@@ -78,6 +78,29 @@ class TelegramBot
 	// Telegram methods
 	// Search the method name here to edit a function
 	
+	# setWebhook
+	public function setWebhook ($url, $certificate = null, $ip = null, $connections = 40, $updates = null, $drop = false, $secret = null) {
+		$args['url'] = $url;
+		if ($certificate) $args['certificate'] = $certificate;
+		if ($ip) $args['ip_address'] = $ip;
+		if ($connections) $args['max_connections'] = $connections;
+		if ($updates) $args['allowed_updates'] = json_encode($updates);
+		if ($drop) $args['drop'] = true;
+		if ($secret) $args['secret_token'] = $secret;
+		return $this->request($this->api('setWebhook'), $args, 'def', true);
+	}
+	
+	# deleteWebhook
+	public function deleteWebhook ($drop = false) {
+		if ($drop) $args['drop'] = true;
+		return $this->request($this->api('deleteWebhook'), $args, 'def', true);
+	}
+	
+	# getWebhookInfo
+	public function getWebhook () {
+		return $this->request($this->api('getWebhookInfo'), false, 'def', true);
+	}
+	
 	# getMe
 	public function getMe () {
 		return $this->request($this->api('getMe'), false, 'def', true);
@@ -979,7 +1002,7 @@ class TelegramBot
 	}
 	
 	# sendInvoices 
-	public function sendInvoice($chat_id, $title, $description, $payload, $provider_token, $currency, $prices, $reply, $buttons, $buttonsType = null) {
+	public function sendInvoice($chat_id, $title, $description, $payload, $provider_token, $currency, $prices, $reply, $buttons = [], $buttonsType = null) {
 		$args = [
 			'chat_id'        => $chat_id,
 			'title'          => $title,
@@ -999,6 +1022,20 @@ class TelegramBot
 		return $this->request($this->api('sendInvoice'), $args);
 	}
 	
+	# createInvoiceLink
+	public function createInvoiceLink($title, $description, $payload, $provider_token, $currency, $prices, $options = []) {
+		$args = [
+			'title'          => $title,
+			'description'    => $description,
+			'payload'        => $payload,
+			'provider_token' => $provider_token,
+			'currency'       => $currency,
+			'prices'         => json_encode($prices)
+		];
+		if (!empty($options)) $args = array_merge($args, $options);
+		return $this->request($this->api('createInvoiceLink'), $args);
+	}
+	
 	# AnswerShippingQuery
 	public function answerSQ($shipping_query_id, $ok, $shipping_options = [], $error_message = false) {
 		$args = [
@@ -1009,7 +1046,7 @@ class TelegramBot
 		if ($error_message) $args['error_message'] = $error_message;
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
-		return $this->request($this->api('sendInvoice'), $args, 'def', $response);
+		return $this->request($this->api('answerShippingQuery'), $args, 'def', $response);
 	}
 	
 	# AnswerPreCheckoutQuery
@@ -1021,7 +1058,7 @@ class TelegramBot
 		if ($error_message) $args['error_message'] = $error_message;
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
-		return $this->request($this->api('sendInvoice'), $args, 'def', $response);
+		return $this->request($this->api('answerPreCheckoutQuery'), $args, 'def', $response);
 	}
 
 	/*		Create Bot API types		*/
@@ -1638,6 +1675,21 @@ class TelegramBot
 		} else {
 			return $text;
 		}
+	}
+	
+	# Create a Bot start link (Save the username to get default bot username by $bot->id)
+	public function createStartLink ($start_command, $username, $to_groups = false) {
+		if ($to_groups) {
+			$type = 'startgroup';
+		} else {
+			$type = 'start';
+		}
+		return 'https://t.me/' . $username . '?' . http_build_query([$type => $start_command]);
+	}
+	
+	# Get file link (You have to use getFile first)
+	public function getFileLink ($file_path) {
+		return 'https://files.telegram.org/file/bot' . $this->token . '/' . $file_path);
 	}
 }
 
