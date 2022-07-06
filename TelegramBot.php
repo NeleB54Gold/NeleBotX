@@ -1689,7 +1689,7 @@ class TelegramBot
 	
 	# Get file link (You have to use getFile first)
 	public function getFileLink ($file_path) {
-		return 'https://files.telegram.org/file/bot' . $this->token . '/' . $file_path);
+		return 'https://files.telegram.org/file/bot' . $this->token . '/' . $file_path;
 	}
 }
 
