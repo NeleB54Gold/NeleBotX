@@ -838,7 +838,7 @@ class TelegramBot
 		];
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['entities'] = json_encode($parse);
+			$args['caption_entities'] = json_encode($parse);
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
