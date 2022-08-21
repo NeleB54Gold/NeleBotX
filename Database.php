@@ -60,7 +60,7 @@ class Database
 	}
 	
 	# Redis set
-	public function rset ($key, $value, $time = 0) {
+	public function rset ($key, $value, $time = null) {
 		if ($this->redis) {
 			try {
 				return $this->redis->set($key, $value, $time);
@@ -223,7 +223,7 @@ class Database
 	public function createTemplateTable ($table) {
 		if ($table == 'users') {
 			return $this->query('CREATE TABLE IF NOT EXISTS users (
-				id				INT				PRIMARY KEY,
+				id				BIGINT			PRIMARY KEY,
 				name			VARCHAR(64)		NOT NULL,
 				surname			VARCHAR(64),
 				username		VARCHAR(32),
@@ -436,7 +436,7 @@ class Database
 
 	# Get User language by user_id
 	public function getLanguage ($id) {
-		if (is_numeric($id) and isset($id) and $id > 0 and $id < 2147483647) {
+		if (is_numeric($id) and isset($id) and $id > 0 and $id < 18446744073709551615) {
 			$q = $this->query('SELECT lang FROM users WHERE id = ? LIMIT 1', [round($id)], 1);
 			if (isset($q['lang'])) {
 				return $q['lang'];

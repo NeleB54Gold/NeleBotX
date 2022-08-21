@@ -4,9 +4,9 @@ class TelegramBot
 {
 	public $configs = [];
 	public $token = '';
-	public $id = 0;
+	public $id = false;
 	public $response = [
-		'ok' => 0
+		'ok' => false
 	];
 	public $update = [];
 	
@@ -15,9 +15,9 @@ class TelegramBot
 		$this->token = $this->configs['token'];
 		$this->id = explode(':', $this->token, 2)[0];
 		if (!is_numeric($this->id)) {
-			$this->response = ['ok' => 0, 'error_code' => 500, 'description' => 'Internal Server Error: invalid token'];
+			$this->response = ['ok' => false, 'error_code' => 500, 'description' => 'Internal Server Error: invalid token'];
 		} else {
-			$this->response = ['ok' => 1];
+			$this->response = ['ok' => true];
 		}
 	}
 	
@@ -53,9 +53,9 @@ class TelegramBot
 			CURLOPT_RETURNTRANSFER	=> $response
 		]);
 		$output = curl_exec($this->curl);
-		if ($json_output = json_decode($output, 1)) return $json_output;
+		if ($json_output = json_decode($output, true)) return $json_output;
 		if ($output) return $output;
-		if ($error = curl_error($this->curl)) return ['ok' => 0, 'error_code' => 500, 'description' => 'CURL Error: ' . $error];
+		if ($error = curl_error($this->curl)) return ['ok' => false, 'error_code' => 500, 'description' => 'CURL Error: ' . $error];
 		return;
 	}
 	
@@ -63,7 +63,7 @@ class TelegramBot
 	public function getUpdate () {
 		$this->update = [];
 		if ($update = file_get_contents('php://input')) {
-			if ($update = json_decode($update, 1)) {
+			if ($update = json_decode($update, true)) {
 				$this->update = $update;
 			}
 		}
@@ -78,23 +78,46 @@ class TelegramBot
 	// Telegram methods
 	// Search the method name here to edit a function
 	
+	# setWebhook
+	public function setWebhook ($url, $certificate = null, $ip = null, $connections = 40, $updates = null, $drop = false, $secret = null) {
+		$args['url'] = $url;
+		if ($certificate) $args['certificate'] = $certificate;
+		if ($ip) $args['ip_address'] = $ip;
+		if ($connections) $args['max_connections'] = $connections;
+		if ($updates) $args['allowed_updates'] = json_encode($updates);
+		if ($drop) $args['drop'] = true;
+		if ($secret) $args['secret_token'] = $secret;
+		return $this->request($this->api('setWebhook'), $args, 'def', true);
+	}
+	
+	# deleteWebhook
+	public function deleteWebhook ($drop = false) {
+		if ($drop) $args['drop'] = true;
+		return $this->request($this->api('deleteWebhook'), $args, 'def', true);
+	}
+	
+	# getWebhookInfo
+	public function getWebhook () {
+		return $this->request($this->api('getWebhookInfo'), false, 'def', true);
+	}
+	
 	# getMe
 	public function getMe () {
-		return $this->request($this->api('getMe'), 0, 'def', 1);
+		return $this->request($this->api('getMe'), false, 'def', true);
 	}
 	
 	# logOut
 	public function logOut () {
-		return $this->request($this->api('logOut'), 0, 'def', 1);
+		return $this->request($this->api('logOut'), false, 'def', true);
 	}
 	
 	# close
 	public function close () {
-		return $this->request($this->api('close'), 0, 'def', 1);
+		return $this->request($this->api('close'), false, 'def', true);
 	}
 	
 	# sendMessage
-	public function sendMessage ($chat_id, $text, $buttons = 0, $parse = 'def', $preview = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendMessage ($chat_id, $text, $buttons = false, $parse = 'def', $preview = 'def', $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'text'		=> $text
@@ -112,8 +135,8 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendMessage'), $args, 'def', $response);
 	}
 
@@ -124,13 +147,13 @@ class TelegramBot
 			'from_chat_id'	=> $from_id,
 			'message_id'	=> $id
 		];
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('forwardMessage'), $args, 'def', $response);
 	}
 
 	# copyMessage
-	public function copyMessage ($chat_id, $from_id, $id, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function copyMessage ($chat_id, $from_id, $id, $caption = false, $buttons = false, $parse = 'def', $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'from_chat_id'	=> $from_id,
@@ -150,13 +173,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('copyMessage'), $args, 'def', $response);
 	}
 
 	# sendPhoto
-	public function sendPhoto ($chat_id, $document, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendPhoto ($chat_id, $document, $caption = false, $buttons = false, $parse = 'def', $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'photo'		=> $document
@@ -173,13 +196,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendPhoto'), $args, 'def', $response);
 	}
 
 	# sendAudio
-	public function sendAudio ($chat_id, $document, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendAudio ($chat_id, $document, $caption = false, $buttons = false, $parse = 'def', $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'audio'		=> $document
@@ -196,13 +219,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendAudio'), $args, 'def', $response);
 	}
 
 	# sendDocument
-	public function sendDocument ($chat_id, $document, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $thumb = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendDocument ($chat_id, $document, $caption = false, $buttons = false, $parse = 'def', $reply = false, $thumb = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'document'	=> $document
@@ -220,13 +243,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendDocument'), $args, 'def', $response);
 	}
 
 	# sendVideo
-	public function sendVideo ($chat_id, $document, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendVideo ($chat_id, $document, $caption = false, $buttons = false, $parse = 'def', $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'video'		=> $document
@@ -243,13 +266,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendVideo'), $args, 'def', $response);
 	}
 
 	# sendAnimation
-	public function sendAnimation ($chat_id, $document, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendAnimation ($chat_id, $document, $caption = false, $buttons = false, $parse = 'def', $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'animation'	=> $document
@@ -266,13 +289,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendAnimation'), $args, 'def', $response);
 	}
 
 	# sendVoice
-	public function sendVoice ($chat_id, $document, $caption = 0, $buttons = 0, $parse = 'def', $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendVoice ($chat_id, $document, $caption = false, $buttons = false, $parse = 'def', $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'voice'		=> $document
@@ -289,13 +312,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendVoice'), $args, 'def', $response);
 	}
 
 	# sendVideoNote
-	public function sendVideoNote ($chat_id, $document, $buttons = 0, $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendVideoNote ($chat_id, $document, $buttons = false, $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'video_note'	=> $document
@@ -305,13 +328,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendVideoNote'), $args, 'def', $response);
 	}
 
 	# sendMediaGroup
-	public function sendMediaGroup ($chat_id, $documents, $reply = 0, $response = 'def') {
+	public function sendMediaGroup ($chat_id, $documents, $reply = false, $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'media'		=> json_encode($documents)
@@ -320,13 +343,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendMediaGroup'), $args, 'def', $response);
 	}
 
 	# sendLocation
-	public function sendLocation ($chat_id, $lati, $long, $live = 0, $buttons = 0, $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendLocation ($chat_id, $lati, $long, $live = false, $buttons = false, $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'latitude'		=> $lati,
@@ -340,13 +363,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendLocation'), $args, 'def', $response);
 	}
 
 	# editMessageLiveLocation
-	public function editLiveLocation($chat_id, $message_id, $lati, $long, $buttons = 0, $buttonsType = 'inline', $response = 'def') {
+	public function editLiveLocation($chat_id, $message_id, $lati, $long, $buttons = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'message_id'	=> $message_id,
@@ -358,7 +381,7 @@ class TelegramBot
 	}
 
 	# stopMessageLiveLocation
-	public function stopLiveLocation($chat_id, $message_id, $buttons = 0, $buttonsType = 'inline', $response = 'def') {
+	public function stopLiveLocation($chat_id, $message_id, $buttons = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'message_id'	=> $message_id
@@ -368,7 +391,7 @@ class TelegramBot
 	}
 
 	# sendVenue
-	public function sendVenue ($chat_id, $lati, $long, $title, $address, $buttons = 0, $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendVenue ($chat_id, $lati, $long, $title, $address, $buttons = false, $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'latitude'		=> $lati,
@@ -381,13 +404,13 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendVenue'), $args, 'def', $response);
 	}
 
 	# sendContact
-	public function sendContact ($chat_id, $number, $first_name, $last_name = 0, $vcard = 0, $buttons = 0, $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendContact ($chat_id, $number, $first_name, $last_name = false, $vcard = false, $buttons = false, $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'phone_number'	=> $number,
@@ -400,8 +423,8 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendContact'), $args, 'def', $response);
 	}
 
@@ -419,7 +442,7 @@ class TelegramBot
 	}
 
 	# sendDice
-	public function sendDice ($chat_id, $dice, $buttons = 0, $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendDice ($chat_id, $dice, $buttons = false, $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'emoji'		=> $dice
@@ -429,7 +452,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['protect_content']) $args['protect_content'] = 1;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		return $this->request($this->api('sendDice'), $args, 'def', $response);
 	}
 
@@ -443,13 +466,13 @@ class TelegramBot
 	}
 
 	# getUserProfilePhotos
-	public function getUserPhotos ($user_id, $offset = 0, $limit = 100) {
+	public function getUserPhotos ($user_id, $offset = false, $limit = 100) {
 		$args = [
 			'user_id'	=> $user_id,
 			'offset'	=> $offset,
 			'limit'		=> $limit
 		];
-		return $this->request($this->api('getUserProfilePhotos'), $args, 'def', 1);
+		return $this->request($this->api('getUserProfilePhotos'), $args, 'def', true);
 	}
 
 	# getFile
@@ -457,11 +480,11 @@ class TelegramBot
 		$args = [
 			'file_id'	=> $file_id
 		];
-		return $this->request($this->api('getFile'), $args, 'def', 1);
+		return $this->request($this->api('getFile'), $args, 'def', true);
 	}
 	
 	# kickChatMember
-	public function kickMember ($chat_id, $user_id, $delete_all_from = 1, $until_date = 0, $response = 'def') {
+	public function kickMember ($chat_id, $user_id, $delete_all_from = true, $until_date = false, $response = 'def') {
 		$args = [
 			'chat_id'			=> $chat_id,
 			'user_id'			=> $user_id,
@@ -472,7 +495,7 @@ class TelegramBot
 	}
 	
 	# unbanChatMember
-	public function unbanMember ($chat_id, $user_id, $only_banned = 1, $response = 'def') {
+	public function unbanMember ($chat_id, $user_id, $only_banned = true, $response = 'def') {
 		$args = [
 			'chat_id'			=> $chat_id,
 			'user_id'			=> $user_id,
@@ -482,7 +505,7 @@ class TelegramBot
 	}
 	
 	# restrictChatMember
-	public function restrictMember ($chat_id, $user_id, $permissions, $until_date = 0, $response = 'def') {
+	public function restrictMember ($chat_id, $user_id, $permissions, $until_date = false, $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'user_id'		=> $user_id,
@@ -501,7 +524,7 @@ class TelegramBot
 		if (is_array($permissions)) {
 			$args = array_merge($args, $permissions);
 		} else {
-			return ['ok' => 0, 'error_code' => 400, 'description' => 'Bad Request: permissions must be an array'];
+			return ['ok' => false, 'error_code' => 400, 'description' => 'Bad Request: permissions must be an array'];
 		}
 		return $this->request($this->api('promoteChatMember'), $args, 'def', $response);
 	}
@@ -548,21 +571,21 @@ class TelegramBot
 		$args = [
 			'chat_id'		=> $chat_id
 		];
-		return $this->request($this->api('exportChatInviteLink'), $args, 'def', 1);
+		return $this->request($this->api('exportChatInviteLink'), $args, 'def', true);
 	}
 	
 	# createChatInviteLink
-	public function newLink ($chat_id, $expire = 0, $members = 0) {
+	public function newLink ($chat_id, $expire = false, $members = false) {
 		$args = [
 			'chat_id'		=> $chat_id
 		];
 		if ($expire) $args['expire_date'] = $expire;
 		if ($members) $args['member_limit'] = $members;
-		return $this->request($this->api('createChatInviteLink'), $args, 'def', 1);
+		return $this->request($this->api('createChatInviteLink'), $args, 'def', true);
 	}
 	
 	# editChatInviteLink
-	public function editLink ($chat_id, $invite, $expire = 0, $members = 0, $response = 'def') {
+	public function editLink ($chat_id, $invite, $expire = false, $members = false, $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'invite_link'	=> $invite
@@ -640,12 +663,12 @@ class TelegramBot
 			'chat_id'		=> $chat_id,
 			'message_id'	=> $message_id
 		];
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('pinChatMessage'), $args, 'def', $response);
 	}
 	
 	# unpinChatMessage
-	public function unpinMessage ($chat_id, $message_id = 0, $response = 'def') {
+	public function unpinMessage ($chat_id, $message_id = false, $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id
 		];
@@ -654,7 +677,7 @@ class TelegramBot
 	}
 	
 	# unpinAllChatMessages
-	public function unpinAll ($chat_id, $message_id = 0, $response = 'def') {
+	public function unpinAll ($chat_id, $message_id = false, $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id
 		];
@@ -674,7 +697,7 @@ class TelegramBot
 		$args = [
 			'chat_id'	=> $chat_id
 		];
-		return $this->request($this->api('getChat'), $args, 'def', 1);
+		return $this->request($this->api('getChat'), $args, 'def', true);
 	}
 	
 	# getChatAdministrators
@@ -682,7 +705,7 @@ class TelegramBot
 		$args = [
 			'chat_id'	=> $chat_id
 		];
-		return $this->request($this->api('getChatAdministrators'), $args, 'def', 1);
+		return $this->request($this->api('getChatAdministrators'), $args, 'def', true);
 	}
 	
 	# getChatMembersCount
@@ -690,7 +713,7 @@ class TelegramBot
 		$args = [
 			'chat_id'	=> $chat_id
 		];
-		return $this->request($this->api('getChatMembersCount'), $args, 'def', 1);
+		return $this->request($this->api('getChatMembersCount'), $args, 'def', true);
 	}
 	
 	# getChatMember
@@ -699,7 +722,7 @@ class TelegramBot
 			'chat_id'	=> $chat_id,
 			'user_id'	=> $user_id
 		];
-		return $this->request($this->api('getChatMember'), $args, 'def', 1);
+		return $this->request($this->api('getChatMember'), $args, 'def', true);
 	}
 	
 	# setChatStickerSet
@@ -720,7 +743,7 @@ class TelegramBot
 	}
 	
 	# answerCallbackQuery
-	public function answerCBQ ($cbq_id, $text = 0, $alert = 0, $url = 0, $cache_time = 0) {
+	public function answerCBQ ($cbq_id, $text = false, $alert = false, $url = false, $cache_time = false) {
 		$args = [
 			'callback_query_id'	=> $cbq_id
 		];
@@ -755,11 +778,37 @@ class TelegramBot
 	
 	# getMyCommands
 	public function getCommands () {
-		return $this->request($this->api('getMyCommands'), $args, 'def', 1);
+		return $this->request($this->api('getMyCommands'), $args, 'def', true);
+	}
+	
+	# setChatMenuButton
+	public function setChatButton ($chat_id, $button) {
+		$args = [
+			'chat_id'		=> $chat_id,
+			'menu_button'	=> json_encode($button)
+		];
+		return $this->request($this->api('setChatMenuButton'), $args);
+	}
+	
+	# getChatMenuButton
+	public function getChatButton ($chat_id) {
+		$args = [
+			'chat_id'		=> $chat_id
+		];
+		return $this->request($this->api('getChatMenuButton'), $args, 'def', true);
+	}
+	
+	# setMyDefaultAdministratorRights
+	public function setMyAdminRights ($rights = [], $for_channels = false) {
+		$args = [
+			'rights'		=> json_encode($rights)
+		];
+		if ($for_channels) $args['for_channels'] = true;
+		return $this->request($this->api('setMyDefaultAdministratorRights'), $args);
 	}
 	
 	# editMessageText
-	public function editText ($chat_id, $message_id, $text, $buttons = 0, $parse = 'def', $preview = 'def', $buttonsType = 'inline', $response = 'def') {
+	public function editText ($chat_id, $message_id, $text, $buttons = false, $parse = 'def', $preview = 'def', $buttonsType = 'inline', $response = 'def') {
 		if ($chat_id) {
 			$args = [
 				'chat_id'		=> $chat_id,
@@ -782,14 +831,14 @@ class TelegramBot
 	}
 	
 	# editMessageCaption
-	public function editCaption ($chat_id, $message_id, $caption = 0, $buttons = 0, $parse = 'def', $buttonsType = 'inline', $response = 'def') {
+	public function editCaption ($chat_id, $message_id, $caption = false, $buttons = false, $parse = 'def', $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'message_id'	=> $message_id
 		];
 		if ($caption) $args['caption'] = $caption;
 		if (is_array($parse) and !empty($parse)) {
-			$args['entities'] = json_encode($parse);
+			$args['caption_entities'] = json_encode($parse);
 		} else {
 			if ($parse === 'def') $parse = $this->configs['parse_mode'];
 			$args['parse_mode'] = $this->parseMode($parse);
@@ -799,7 +848,7 @@ class TelegramBot
 	}
 	
 	# editMessageMedia
-	public function editMedia ($chat_id, $message_id, $media, $buttons = 0, $buttonsType = 'inline', $response = 'def') {
+	public function editMedia ($chat_id, $message_id, $media, $buttons = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'		=> $chat_id,
 			'message_id'	=> $message_id,
@@ -829,7 +878,7 @@ class TelegramBot
 	}
 	
 	# sendSticker
-	public function sendSticker ($chat_id, $document, $buttons = 0, $reply = 0, $buttonsType = 'inline', $response = 'def') {
+	public function sendSticker ($chat_id, $document, $buttons = false, $reply = false, $buttonsType = 'inline', $response = 'def') {
 		$args = [
 			'chat_id'	=> $chat_id,
 			'sticker'	=> $document
@@ -839,7 +888,7 @@ class TelegramBot
 			$args['reply_to_message_id'] = $reply;
 			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
 		}
-		if ($this->configs['disable_notification']) $args['disable_notification'] = 1;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendSticker'), $args, 'def', $response);
 	}
 
@@ -848,7 +897,7 @@ class TelegramBot
 		$args = [
 			'name'	=> $set
 		];
-		return $this->request($this->api('getStickerSet'), $args, 'def', 1);
+		return $this->request($this->api('getStickerSet'), $args, 'def', true);
 	}
 	
 	# uploadStickerFile
@@ -857,36 +906,40 @@ class TelegramBot
 			'user_id'		=> $user_id,
 			'png_sticker'	=> $document
 		];
-		return $this->request($this->api('uploadStickerFile'), $args, 'def', 1);
+		return $this->request($this->api('uploadStickerFile'), $args, 'def', true);
 	}
 	
 	# createNewStickerSet
-	public function createStickers ($user_id, $set, $title, $sticker, $is_animated = 0, $emojis = 0, $contains_masks = 0, $mask_position = 0, $response = 'def') {
+	public function createStickers ($user_id, $set, $title, $sticker, $is_animated = false, $is_video = false, $emojis = false, $contains_masks = false, $mask_position = false, $response = 'def') {
 		$args = [
 			'user_id'		=> $user_id,
 			'name'			=> $set,
 			'title'			=> $title
 		];
-		if ($is_animated) {
+		if ($is_video) {
+			$args['webm_sticker'] = $sticker;
+		} elseif ($is_animated) {
 			$args['tgs_sticker'] = $sticker;
 		} else {
 			$args['png_sticker'] = $sticker;
 		}
 		if ($emojis) $args['emojis'] = $emojis;
 		if ($contains_masks) {
-			$args['contains_masks'] = 1;
+			$args['contains_masks'] = true;
 			if ($mask_position) $args['mask_position'] = json_encode($mask_position);
 		}
 		return $this->request($this->api('createNewStickerSet'), $args, 'def', $response);
 	}
 	
 	# addStickerToSet
-	public function addSticker ($user_id, $set, $sticker, $is_animated = 0, $emojis = 0, $mask_position = 0, $response = 'def') {
+	public function addSticker ($user_id, $set, $sticker, $is_animated = false, $is_video = false, $emojis = false, $mask_position = false, $response = 'def') {
 		$args = [
 			'user_id'		=> $user_id,
 			'name'			=> $set
 		];
-		if ($is_animated) {
+		if ($is_video) {
+			$args['webm_sticker'] = $sticker;
+		} elseif ($is_animated) {
 			$args['tgs_sticker'] = $sticker;
 		} else {
 			$args['png_sticker'] = $sticker;
@@ -924,7 +977,7 @@ class TelegramBot
 	}
 	
 	# answerInlineQuery
-	public function answerIQ ($inline_id, $results = [], $switch_pm_text = 0, $switch_pm_parameter = 0, $next_offset = 0, $is_personal = 0, $response = 'def') {
+	public function answerIQ ($inline_id, $results = [], $switch_pm_text = false, $switch_pm_parameter = false, $next_offset = false, $is_personal = false, $response = 'def') {
 		$args = [
 			'inline_query_id'	=> $inline_id,
 			'results'			=> json_encode($results),
@@ -934,9 +987,78 @@ class TelegramBot
 			$args['switch_pm_text'] = $switch_pm_text;
 			$args['switch_pm_parameter'] = $switch_pm_parameter;
 		}
-		if ($is_personal) $args['is_personal'] = 1;
+		if ($is_personal) $args['is_personal'] = true;
 		if ($next_offset) $args['next_offset'] = $next_offset;
 		return $this->request($this->api('answerInlineQuery'), $args, 'def', $response);
+	}
+
+	# answerWebAppQuery
+	public function answerWAQ ($web_app_query_id, $result = []) {
+		$args = [
+			'inline_query_id'	=> $inline_id,
+			'result'			=> json_encode($result)
+		];
+		return $this->request($this->api('answerWebAppQuery'), $args, 'def', $response);
+	}
+	
+	# sendInvoices 
+	public function sendInvoice($chat_id, $title, $description, $payload, $provider_token, $currency, $prices, $reply, $buttons = [], $buttonsType = null) {
+		$args = [
+			'chat_id'        => $chat_id,
+			'title'          => $title,
+			'description'    => $description,
+			'payload'        => $payload,
+			'provider_token' => $provider_token,
+			'currency'       => $currency,
+			'prices'         => json_encode($prices)
+		];
+		if ($reply and is_numeric($reply)) {
+			$args['reply_to_message_id'] = $reply;
+			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+		}
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($buttons) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
+		return $this->request($this->api('sendInvoice'), $args);
+	}
+	
+	# createInvoiceLink
+	public function createInvoiceLink($title, $description, $payload, $provider_token, $currency, $prices, $options = []) {
+		$args = [
+			'title'          => $title,
+			'description'    => $description,
+			'payload'        => $payload,
+			'provider_token' => $provider_token,
+			'currency'       => $currency,
+			'prices'         => json_encode($prices)
+		];
+		if (!empty($options)) $args = array_merge($args, $options);
+		return $this->request($this->api('createInvoiceLink'), $args);
+	}
+	
+	# AnswerShippingQuery
+	public function answerSQ($shipping_query_id, $ok, $shipping_options = [], $error_message = false) {
+		$args = [
+			'shipping_query_id' => $shipping_query_id,
+			'ok'                => $ok
+		];
+		if (!empty($shipping_options)) $args['shipping_options'] = json_encode($shipping_options);
+		if ($error_message) $args['error_message'] = $error_message;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
+		return $this->request($this->api('answerShippingQuery'), $args, 'def', $response);
+	}
+	
+	# AnswerPreCheckoutQuery
+	public function answerPCQ($pre_checkout_query_id, $ok, $error_message = false) {
+		$args = [
+			'pre_checkout_query_id' => $pre_checkout_query_id,
+			'ok'                    => $ok
+		];
+		if ($error_message) $args['error_message'] = $error_message;
+		if ($this->configs['protect_content']) $args['protect_content'] = true;
+		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
+		return $this->request($this->api('answerPreCheckoutQuery'), $args, 'def', $response);
 	}
 
 	/*		Create Bot API types		*/
@@ -944,9 +1066,9 @@ class TelegramBot
 	# ReplyKeyboardMarkup
 	public function createButtons ($buttons = [], $buttonsType = 'inline') {
 		if ($buttonsType == 'reply') {
-			return $this->createForceReply(1);
+			return $this->createForceReply(true);
 		} elseif ($buttonsType == 'remove') {
-			return $this->createReplyKeyboardRemove(1);
+			return $this->createReplyKeyboardRemove(true);
 		} elseif ($buttonsType == 'inline') {
 			return [
 				'inline_keyboard' => $buttons
@@ -954,13 +1076,13 @@ class TelegramBot
 		} else {
 			return [
 				'keyboard' => $buttons,
-				'resize_keyboard' => 1
+				'resize_keyboard' => true
 			];
 		}
 	}
 
 	# KeyboardButton
-	public function createButton ($text, $contact = 0, $location = 0, $poll = 0) {
+	public function createButton ($text, $contact = false, $location = false, $poll = false) {
 		$args = [
 			'text'	=> $text
 		];
@@ -975,9 +1097,9 @@ class TelegramBot
 	}
 
 	# ReplyKeyboardRemove
-	public function createReplyKeyboardRemove ($selective = 0) {
+	public function createReplyKeyboardRemove ($selective = false) {
 		$args = [
-			'remove_keyboard'	=> 1
+			'remove_keyboard'	=> true
 		];
 		if ($selective) $args['selective'] = true;
 		return $args;
@@ -997,7 +1119,7 @@ class TelegramBot
 	}
 
 	# LoginUrl
-	public function createLoginButton ($url, $text = 0, $request_write = 0, $bot_username = 0) {
+	public function createLoginButton ($url, $text = false, $request_write = false, $bot_username = false) {
 		$args = [
 			'url'	=> $url
 		];
@@ -1008,16 +1130,16 @@ class TelegramBot
 	}
 
 	# ForceReply
-	public function createForceReply ($selective = 0) {
+	public function createForceReply ($selective = false) {
 		$args = [
-			'force_reply'	=> 1
+			'force_reply'	=> true
 		];
 		if ($selective) $args['selective'];
 		return $args;
 	}
 
 	# ChatPermissions
-	public function createChatPermissions ($messages = 0, $media = 'null', $polls = 'null', $other = 'null', $previews = 'null', $change_info = 'null', $invite = 'null', $pin = 'null') {
+	public function createChatPermissions ($messages = false, $media = 'null', $polls = 'null', $other = 'null', $previews = 'null', $change_info = 'null', $invite = 'null', $pin = 'null') {
 		$args['can_send_messages'] = $messages;
 		if ($messages) {
 			if ($media !== 'null') $args['can_send_media_messages'] = $media;
@@ -1042,7 +1164,7 @@ class TelegramBot
 	}
 
 	# InputMediaAnimation
-	public function createAnimationInput($animation, $caption = 0, $parse = 'def') {
+	public function createAnimationInput($animation, $caption = false, $parse = 'def') {
 		$args = [
 			'type'		=> 'animation',
 			'media'		=> $animation
@@ -1060,7 +1182,7 @@ class TelegramBot
 	}
 
 	# InputMediaDocument
-	public function createDocumentInput($document, $caption = 0, $parse = 'def', $thumb = 0, $disable_content_type_detection = 0) {
+	public function createDocumentInput($document, $caption = false, $parse = 'def', $thumb = false, $disable_content_type_detection = false) {
 		$args = [
 			'type'		=> 'document',
 			'media'		=> $document
@@ -1080,7 +1202,7 @@ class TelegramBot
 	}
 
 	# InputMediaAudio
-	public function createAudioInput($audio, $caption = 0, $parse = 'def', $title = 0) {
+	public function createAudioInput($audio, $caption = false, $parse = 'def', $title = false) {
 		$args = [
 			'type'		=> 'audio',
 			'media'		=> $audio
@@ -1099,7 +1221,7 @@ class TelegramBot
 	}
 
 	# InputMediaPhoto
-	public function createPhotoInput($photo, $caption = 0, $parse = 'def') {
+	public function createPhotoInput($photo, $caption = false, $parse = 'def') {
 		$args = [
 			'type'		=> 'photo',
 			'media'		=> $photo
@@ -1119,11 +1241,11 @@ class TelegramBot
 	# InputFile
 	public function createFileInput($file_name, $mime_content_type = null, $rename = null) {
 		if (function_exists('curl_file_create')) return curl_file_create($file_name, $mime_content_type, $rename);
-		return 0;
+		return false;
 	}
 
 	# InlineQueryResultArticle
-	public function createInlineArticle ($id, $title, $description = 0, $input, $buttons = 0, $url = 0, $hide_url = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineArticle ($id, $title, $description = false, $input, $buttons = false, $url = false, $hide_url = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'article',
 			'id'					=> $id,
@@ -1133,13 +1255,13 @@ class TelegramBot
 		if ($description) $args['description'] = $description;
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = $this->createButtons($buttons, $buttonsType);
 		if ($url) $args['url'] = $url;
-		if ($hide_url) $args['hide_url'] = 1;
+		if ($hide_url) $args['hide_url'] = true;
 		if ($thumb) $args['thumb_url'] = $thumb;
 		return $args;
 	}
 	
 	# InlineQueryResultPhoto
-	public function createInlinePhoto ($id, $title, $description = 0, $document, $caption = 0, $parse = 'def', $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlinePhoto ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'photo',
 			'id'					=> $id,
@@ -1164,7 +1286,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultGif
-	public function createInlineGif ($id, $title, $description = 0, $document, $caption = 0, $parse = 'def', $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineGif ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'gif',
 			'id'					=> $id,
@@ -1189,7 +1311,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultVideo
-	public function createInlineVideo ($id, $title, $description = 0, $document, $caption = 0, $parse = 'def', $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineVideo ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'video',
 			'id'					=> $id,
@@ -1215,7 +1337,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultAudio
-	public function createInlineAudio ($id, $title, $description = 0, $document, $caption = 0, $parse = 'def', $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineAudio ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'audio',
 			'id'					=> $id,
@@ -1235,7 +1357,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultVoice
-	public function createInlineVoice ($id, $title, $description = 0, $document, $caption = 0, $parse = 'def', $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineVoice ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'voice',
 			'id'					=> $id,
@@ -1255,7 +1377,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultDocument
-	public function createInlineDocument ($id, $title, $description = 0, $document, $caption = 0, $parse = 'def', $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineDocument ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'document',
 			'id'					=> $id,
@@ -1276,7 +1398,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultLocation
-	public function createInlineLocation ($id, $title, $lati, $long, $live = 0, $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineLocation ($id, $title, $lati, $long, $live = false, $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'location',
 			'id'					=> $id,
@@ -1291,7 +1413,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultVenue
-	public function createInlineVenue ($id, $title, $address, $lati, $long, $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineVenue ($id, $title, $address, $lati, $long, $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'venue',
 			'id'					=> $id,
@@ -1306,7 +1428,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultContact
-	public function createInlineContact ($id, $number, $first_name, $last_name = 0, $vcard = 0, $buttons = 0, $thumb = 0, $buttonsType = 'inline') {
+	public function createInlineContact ($id, $number, $first_name, $last_name = false, $vcard = false, $buttons = false, $thumb = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'contact',
 			'id'					=> $id,
@@ -1321,7 +1443,7 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultGame
-	public function createInlineGame ($id, $title, $buttons = 0, $buttonsType = 'inline') {
+	public function createInlineGame ($id, $title, $buttons = false, $buttonsType = 'inline') {
 		$args = [
 			'type'					=> 'game',
 			'id'					=> $id,
@@ -1348,7 +1470,7 @@ class TelegramBot
 	}
 	
 	# InputLocationMessageContent
-	public function createLocationInput($lati, $long, $live = 0) {
+	public function createLocationInput($lati, $long, $live = false) {
 		$args = [
 			'latitude'	=> $lati,
 			'longitude'	=> $long
@@ -1369,7 +1491,7 @@ class TelegramBot
 	}
 	
 	# InputContactMessageContent
-	public function createContactInput($number, $first_name, $last_name = 0, $vcard = 0) {
+	public function createContactInput($number, $first_name, $last_name = false, $vcard = false) {
 		$args = [
 			'phone_number'	=> $number,
 			'first_name'	=> $first_name
@@ -1377,6 +1499,13 @@ class TelegramBot
 		if ($last_name) $args['last_name'] = $last_name;
 		if ($vcard) $args['vcard'] = $vcard;
 		return $args;
+	}
+	
+	# SentWebAppMessage
+	public function createWebAppMessage($inline_message_id) {
+		return [
+			'inline_message_id'	=> $inline_message_id
+		];
 	}
 
 	# SendInvoices 
@@ -1475,7 +1604,7 @@ class TelegramBot
 	}
 	
 	# Bold
-	public function bold ($text, $specialchars = 0, $parse = 'def') {
+	public function bold ($text, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1489,7 +1618,7 @@ class TelegramBot
 	}
 	
 	# Italic
-	public function italic ($text, $specialchars = 0, $parse = 'def') {
+	public function italic ($text, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1503,7 +1632,7 @@ class TelegramBot
 	}
 	
 	# Underline
-	public function underline ($text, $specialchars = 0, $parse = 'def') {
+	public function underline ($text, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1517,7 +1646,7 @@ class TelegramBot
 	}
 	
 	# Strikethrough
-	public function strikethrough ($text, $specialchars = 0, $parse = 'def') {
+	public function strikethrough ($text, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1530,8 +1659,22 @@ class TelegramBot
 		}
 	}
 	
+	# Spoiler
+	public function spoiler ($text, $specialchars = false, $parse = 'def') {
+		if ($parse === 'def') $parse = $this->configs['parse_mode'];
+		$parse = $this->parseMode($parse);
+		if ($specialchars) $text = $this->specialchars($text, $parse);
+		if ($parse == 'html') {
+			return '<tg-spoiler>' . $text . '</tg-spoiler>';
+		} elseif ($parse == 'markdownv2') {
+			return '||' . $text . '||';
+		} else {
+			return $text;
+		}
+	}
+	
 	# Text Link
-	public function text_link ($text, $link, $specialchars = 0, $parse = 'def') {
+	public function text_link ($text, $link, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1545,12 +1688,12 @@ class TelegramBot
 	}
 	
 	# Tag
-	public function tag ($id, $text, $specialchars = 0, $parse = 'def') {
+	public function tag ($id, $text, $specialchars = false, $parse = 'def') {
 		return $this->text_link($text, 'tg://user?id=' . $id, $specialchars, $parse);
 	}
 	
 	# Inline fixed-width code
-	public function code ($text, $specialchars = 0, $parse = 'def') {
+	public function code ($text, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1564,7 +1707,7 @@ class TelegramBot
 	}
 	
 	# Pre-formatted fixed-width code block
-	public function pre ($text, $specialchars = 0, $parse = 'def') {
+	public function pre ($text, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1578,7 +1721,7 @@ class TelegramBot
 	}
 	
 	# Pre-formatted fixed-width code block written in the Python programming language
-	public function prepy ($text, $specialchars = 0, $parse = 'def') {
+	public function prepy ($text, $specialchars = false, $parse = 'def') {
 		if ($parse === 'def') $parse = $this->configs['parse_mode'];
 		$parse = $this->parseMode($parse);
 		if ($specialchars) $text = $this->specialchars($text, $parse);
@@ -1589,6 +1732,21 @@ class TelegramBot
 		} else {
 			return $text;
 		}
+	}
+	
+	# Create a Bot start link (Save the username to get default bot username by $bot->id)
+	public function createStartLink ($start_command, $username, $to_groups = false) {
+		if ($to_groups) {
+			$type = 'startgroup';
+		} else {
+			$type = 'start';
+		}
+		return 'https://t.me/' . $username . '?' . http_build_query([$type => $start_command]);
+	}
+	
+	# Get file link (You have to use getFile first)
+	public function getFileLink ($file_path) {
+		return 'https://files.telegram.org/file/bot' . $this->token . '/' . $file_path;
 	}
 }
 

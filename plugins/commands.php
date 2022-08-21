@@ -1,27 +1,42 @@
 <?php
 
+## Default Commands plugin
+## Here you can write all the code that will be executed.
+## Take these commands as an example to write your Bot!
+
 # Ignore inline messages (via @)
 if ($v->via_bot) die;
 
-# Commands for all chats
+# Print the result from Database
 if ($v->command == 'data') {
 	$juser = $bot->code(substr(json_encode($user, JSON_PRETTY_PRINT), 0, 1024), 1);
 	$jgroup = $bot->code(substr(json_encode($group, JSON_PRETTY_PRINT), 0, 1024), 1);
 	$jchannel = $bot->code(substr(json_encode($channel, JSON_PRETTY_PRINT), 0, 1024), 1);
 	$bot->sendMessage($v->chat_id, $juser . PHP_EOL . $jgroup . PHP_EOL . $jchannel);
-} elseif ($v->command == 'dump') {
+}
+# Dump the update
+elseif ($v->command == 'dump') {
 	$bot->sendMessage($v->chat_id, $bot->code(json_encode($v->update, JSON_PRETTY_PRINT), 1));
-} elseif ($v->command == 'neledump') {
+}
+# Dump NeleBot X Variables
+elseif ($v->command == 'neledump') {
 	$bot->sendMessage($v->chat_id, $bot->code(substr(json_encode($v, JSON_PRETTY_PRINT), 2500, 4096), 1));
-} elseif ($v->chat_type == 'private') {
-	# Private chat with Bot
-	if ($v->command == 'performance') {
+}
+
+# Private chat with Bot
+elseif ($v->chat_type == 'private') {
+	# Register that the user has started the Bot in one string
+	if ($bot->configs['database']['status'] && $user['status'] !== 'started') $db->setStatus($v->user_id, 'started');
+	# Check the exec time of all script to here (Bot-Admin only)
+	if ($v->isAdmin() && $v->command == 'performance') {
 		$end_time = microtime(true);
 		$exec_time = ($end_time - $start_time) * 1000; // Microseconds to milliseconds
 		$bot->sendMessage($v->chat_id, $bot->bold('Ziumm!') . PHP_EOL . 'Only ' . round($exec_time, 4) . ' milliseconds to execute this script!');
-	} elseif ($v->isAdmin() and strpos($v->command, 'ping') === 0) {
+	}
+	# Ping command (Bot-Admin only)
+	elseif ($v->isAdmin() && strpos($v->command, 'ping') === 0) {
 		$times[] = microtime(true);
-		if (strpos($v->command, 'ping ') === 0 and is_numeric(str_replace('ping ', '', $v->command))) {
+		if (strpos($v->command, 'ping ') === 0 && is_numeric(str_replace('ping ', '', $v->command))) {
 			$max = round(str_replace('ping ', '', $v->command));
 		} else {
 			$max = 3;
@@ -34,8 +49,9 @@ if ($v->command == 'data') {
 			if ($k !== 0) $pings .= round(($time - $times[$k - 1]) * 1000, 2) . ' milliseconds' . PHP_EOL; // Microseconds to milliseconds
 		}
 		$bot->sendMessage($v->chat_id, $pings . PHP_EOL . $bot->bold('Average: ') . round((((end($times) - $times[0]) / $max) * 1000), 2) . ' milliseconds');
-	} elseif ($v->command == 'start' or $v->query_data == 'start') {
-		if ($bot->configs['database']['status'] and $user['status'] !== 'started') $db->setStatus($v->user_id, 'started');
+	}
+	# Start Command (via command or query_data)
+	elseif ($v->command == 'start' || $v->query_data == 'start') {
 		$buttons[] = [$bot->createInlineButton('📥 Download NeleBot X!', 'https://t.me/NeleBotX', 'url')];
 		$buttons[] = [$bot->createInlineButton('ℹ️ About NeleBot X', 'help')];
 		$link_preview = $bot->text_link(' ', 'https://telegra.ph/file/f508ceecf6dedc95c3be1.jpg');
@@ -46,10 +62,13 @@ if ($v->command == 'data') {
 		} else {
 			$bot->sendMessage($v->chat_id, $t, $buttons, 'def', 0);
 		}
-	} elseif ($v->command == 'help' or $v->query_data == 'help') {
+	}
+	# Help command
+	elseif ($v->command == 'help' || $v->query_data == 'help') {
 		$buttons[] = [$bot->createInlineButton('📥 Download NeleBot X!', 'https://t.me/NeleBotX', 'url'), $bot->createInlineButton('❓ F.A.Q.', 'https://t.me/NeleBotX', 'url')];
 		$buttons[] = [$bot->createInlineButton('🙋🏻‍♂️ What NeleBot X can do?', 'examples')];
 		$buttons[] = [$bot->createInlineButton('◀️ Back', 'start')];
+		# Check redis status to cache the commands list
 		if ($bot->configs['redis']['status']) {
 			if ($cache = $db->rget('NeleBotX-' . $bot->id . '-commandsList')) $commands = json_decode($cache, true);
 			if (!$commands) $commands = $bot->getCommands();
@@ -58,7 +77,7 @@ if ($v->command == 'data') {
 			} else {
 				if ($cache) $db->rdel('NeleBotX-' . $bot->id . '-commandsList');
 			}
-			if (isset($commands['result']) and !empty($commands['result']))  {
+			if (isset($commands['result']) && !empty($commands['result']))  {
 				foreach ($commands['result'] as $command) {
 					$list .= PHP_EOL . '/' . $command['command'] . ' - ' . $bot->italic($command['description']);
 				}
@@ -74,12 +93,16 @@ if ($v->command == 'data') {
 		} else {
 			$bot->sendMessage($v->chat_id, $t, $buttons, 'def', 0);
 		}
-	} elseif ($v->command == 'upload') {
+	}
+	# Uplolad test command [Check the read/write permissions]
+	elseif ($v->command == 'upload') {
 		file_put_contents('test.json', json_encode($v->getUser()));
 		$file = $bot->createFileInput('test.json', 'text/json', 'Test file for ' . $v->user_first_name . '.json');
 		$bot->sendDocument($v->chat_id, $file, '💾 Uploaded!');
 		unlink('test.json');
-	} elseif ($v->query_data == 'examples') {
+	}
+	# What NeleBot X can do?
+	elseif ($v->query_data == 'examples') {
 		$bot->answerCBQ($v->query_id);
 		$t = $bot->bold('😎 What NeleBot X Framework you can do? Everything!') . PHP_EOL;
 		$bot->editText($v->chat_id, $v->message_id, $t, $buttons, 'def', 0);
@@ -111,7 +134,9 @@ if ($v->command == 'data') {
 			[$bot->createInlineButton('◀️ Back', 'help'), $bot->createInlineButton('🔗 Connect any callback', 'start')],
 		];
 		$bot->editText($v->chat_id, $v->message_id, $t, $buttons, 'def', 0);
-	} else {
+	}
+	# Unknown command/button/action
+	else {
 		$help = PHP_EOL . 'Try /help for a command list!';
 		if ($v->command) {
 			$t = '😶 Unknown command...' . $help;
@@ -231,7 +256,11 @@ if ($v->update['inline_query']) {
 		);
 	}
 	$r = $bot->answerIQ($v->id, $results, $sw_text, $sw_arg);
-} elseif ($v->update['chosen_inline_result']) {
+} 
+
+# Get the chosen inline result choosed by the user
+# To get this update type you need to enable the Inline feedback from @BotFather!
+elseif ($v->update['chosen_inline_result']) {
 	$bot->sendMessage($v->user_id, 'You have chosed: ' . $v->id);
 }
 
