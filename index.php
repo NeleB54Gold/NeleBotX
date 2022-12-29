@@ -4,7 +4,7 @@ $start_time = microtime(true);
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 ini_set('error_reporting', E_ALL);
-ini_set('error_log', '/var/log/NeleBotX/logs.txt');
+ini_set('error_log', __DIR__ . '/logs.txt');
 ini_set('ignore_repeated_errors', 1);
 
 require_once('configs.php');
