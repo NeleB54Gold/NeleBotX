@@ -634,7 +634,7 @@ class Variables
 		return [
 			'id'			=> $this->chat_id,
 			'title'			=> $this->chat_title,
-			'username'		=> $this->user_username,
+			'username'		=> $this->chat_username,
 			'language_code'	=> $this->user_language_code
 		];
 	}
@@ -644,7 +644,7 @@ class Variables
 		return [
 			'id'			=> $this->chat_id,
 			'title'			=> $this->chat_title,
-			'username'		=> $this->user_username,
+			'username'		=> $this->chat_username,
 			'language_code'	=> $this->user_language_code
 		];
 	}
