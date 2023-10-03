@@ -14,7 +14,7 @@ class NeleBotX
 	];
 	
 	# Initialization
-	public function __construct ($configs) {
+	public function __construct ($configs, $getUpdate = true) {
 		$this->configs = $configs;
 		if (empty($this->configs)) {
 			return $this->response = ['ok' => 0, 'error_code' => 500, 'description' => "Internal Server Error: missing configurations"];
@@ -23,8 +23,12 @@ class NeleBotX
 		if (!$this->api->response['ok']) {
 			return $this->response = $this->api->response;
 		}
-		$update = $this->api->getUpdate();
-		$this->v = new Variables($this->configs, $update);
+		if ($getUpdate) {
+			$update = $this->api->getUpdate();
+			$this->v = new Variables($this->configs, $update);
+		} else {
+			$this->v = new Variables($this->configs);
+		}
 		if (!$this->v->response['ok']) {
 			return $this->response = $this->v->response;
 		}

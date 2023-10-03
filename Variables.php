@@ -10,6 +10,7 @@ class Variables
 	
 	public function __construct ($configs, $update) {
 		$this->configs = $configs;
+		if (empty($update)) return $this->response = ['ok' => 1];
 		$this->update = $update;
 		if (!isset($this->update['update_id'])) {
 			return $this->response = ['ok' => 0, 'error_code' => 400, 'description' => 'Bad Request: update_id not found'];
@@ -111,6 +112,7 @@ class Variables
 		$this->chat_type = $Chat['type'];
 		$this->chat_title = $Chat['title'];
 		$this->chat_username = $Chat['username'];
+		$this->chat_is_forum = $Chat['is_forum'];
 		$this->chat_first_name = $Chat['first_name'];
 		$this->chat_last_name = $Chat['last_name'];
 	}
@@ -128,6 +130,7 @@ class Variables
 	public function varMessage ($Message) {
 		if (empty($Message)) return;
 		$this->message_id = $Message['message_id'];
+		$this->message_thread_id  = $Message['message_thread_id '];
 		$this->varUser($Message['from']);
 		$this->sender_chat = $Message['sender_chat'];
 		$this->date = $Message['date'];
@@ -138,6 +141,7 @@ class Variables
 		$this->forward_sender_chat = $Message['forward_sender_chat'];
 		$this->is_automatic_forward	= $Message['is_automatic_forward'];
 		$this->forward_date = $Message['forward_date'];
+		$this->is_topic_message = $Message['is_topic_message'];
 		$this->is_automatic_forward = $Message['is_automatic_forward'];
 		$this->reply_to_message = $Message['reply_to_message'];
 		$this->via_bot = $Message['via_bot'];
@@ -163,11 +167,13 @@ class Variables
 		$this->varDocument($Message['document']);
 		$this->varPhoto($Message['photo']);
 		$this->varSticker($Message['sticker']);
+		$this->varStory($Message['story']);
 		$this->varVideo($Message['video']);
 		$this->varVideoNote($Message['video_note']);
 		$this->varVoice($Message['voice']);
 		$this->caption = $Message['caption'];
 		$this->caption_entities = $Message['caption_entities'];
+		$this->has_media_spoiler = $Message['has_media_spoiler'];
 		$this->varContact($Message['contact']);
 		$this->varDice($Message['dice']);
 		$this->varGame($Message['game']);
@@ -189,9 +195,18 @@ class Variables
 		$this->pinned_message = $Message['pinned_message'];
 		$this->invoice = $Message['invoice'];
 		$this->successful_payment = $Message['successful_payment'];
+		$this->varUserShared($Message['user_shared']);
+		$this->varChatShared($Message['chat_shared']);
 		$this->connected_website = $Message['connected_website'];
+		$this->varWriteAccessAllowed($Message['write_access_allowed']);
 		$this->passport_data = $Message['passport_data'];
 		$this->proximity_alert_triggered = $Message['proximity_alert_triggered'];
+		$this->varForumTopicCreated($Message['forum_topic_created']);
+		$this->varForumTopicEdited($Message['forum_topic_edited']);
+		$this->varForumTopicClosed($Message['forum_topic_closed']);
+		$this->varForumTopicReopened($Message['forum_topic_reopened']);
+		$this->varGeneralForumTopicHidden($Message['general_forum_topic_hidden']);
+		$this->varGeneralForumTopicUnhidden($Message['general_forum_topic_unhidden']);
 		$this->varVideoChatScheduled($Message['video_chat_scheduled']);
 		$this->varVideoChatStarted($Message['video_chat_started']);
 		$this->video_chat_ended = $Message['video_chat_ended'];
@@ -332,6 +347,7 @@ class Variables
 	public function varPollAnswer ($PollAnswer) {
 		if (empty($PollAnswer)) return;
 		$this->poll_id = $PollAnswer['text'];
+		$this->varChat($PollAnswer['voter_chat']);
 		$this->varUser($PollAnswer['user']);
 		$this->poll_options = $PollAnswer['option_ids'];
 	}
@@ -391,13 +407,66 @@ class Variables
 		$this->message_auto_delete_time = $MessageAutoDeleteTimerChanged['message_auto_delete_time'];
 	}
 
+	public function varForumTopicCreated ($ForumTopicCreated) {
+		if (empty($ForumTopicCreated)) return;
+		$this->forum_topic_created = true;
+		$this->forum_topic_name = $ForumTopicCreated['name'];
+		$this->forum_topic_icon = $ForumTopicCreated['icon_color'];
+		$this->forum_topic_emoji_id = $ForumTopicCreated['icon_custom_emoji_id'];
+	}
+
+	public function varForumTopicClosed ($ForumTopicClosed) {
+		if (!is_null($ForumTopicClosed)) return;
+		$this->forum_topic_closed = true;
+	}
+
+	public function varForumTopicEdited ($ForumTopicEdited) {
+		if (empty($ForumTopicEdited)) return;
+		$this->forum_topic_edited = true;
+		$this->forum_topic_name = $ForumTopicEdited['name'];
+		$this->forum_topic_emoji_id = $ForumTopicEdited['icon_custom_emoji_id'];
+	}
+
+	public function varForumTopicReopened ($ForumTopicReopened) {
+		if (!is_null($ForumTopicReopened)) return;
+		$this->forum_topic_reopened = true;
+	}
+
+	public function varGeneralForumTopicHidden ($GeneralForumTopicHidden) {
+		if (!is_null($GeneralForumTopicHidden)) return;
+		$this->forum_topic_hidden = true;
+	}
+
+
+	public function varGeneralForumTopicUnhidden ($GeneralForumTopicUnhidden) {
+		if (!is_null($GeneralForumTopicUnhidden)) return;
+		$this->forum_topic_unhidden = true;
+	}
+
+	public function varUserShared ($UserShared) {
+		if (!is_null($UserShared)) return;
+		$this->ushared_request_id = $UserShared['request_id'];
+		$this->shared_user_id = $UserShared['user_id'];
+	}
+
+	public function varChatShared ($ChatShared) {
+		if (!is_null($ChatShared)) return;
+		$this->cshared_request_id = $ChatShared['request_id'];
+		$this->shared_chat_id = $ChatShared['chat_id'];
+	}
+
+	public function varWriteAccessAllowed () {
+		if (!is_null($WriteAccessAllowed)) return;
+		$this->write_access_allowed = $WriteAccessAllowed['web_app_name'];
+	}
+
 	public function varVideoChatScheduled ($VideoChatScheduled) {
 		if (empty($VideoChatScheduled)) return;
 		$this->video_chat_sceduled = $VideoChatScheduled['start_date'];
 	}
 
 	public function varVideoChatStarted ($VideoChatStarted) {
-		if (empty($VideoChatStarted)) return;
+		if (!is_null($VideoChatStarted)) return;
 		$this->video_chat_started = true;
 	}
 
@@ -438,6 +507,8 @@ class Variables
 		if (empty($KeyboardButton)) return;
 		$this->buttons[] = [
 			'text'				=> $KeyboardButton['text'],
+			'request_chat'		=> $KeyboardButton['request_chat'],
+			'request_user'		=> $KeyboardButton['request_user'],
 			'request_contact'	=> $KeyboardButton['request_contact'],
 			'request_location'	=> $KeyboardButton['request_location'],
 			'request_poll'		=> $KeyboardButton['request_poll'],
@@ -514,33 +585,14 @@ class Variables
 		$this->invite_link = $ChatInviteLink;
 	}
 
+	public function varChatAdministratorRights ($ChatAdministratorRights) {
+		if (empty($ChatAdministratorRights)) return;
+		$this->administrator_rights = $ChatAdministratorRights;
+	}
+
 	public function varChatMember ($ChatMember) {
 		if (empty($ChatMember)) return;
-		$this->member_id = $ChatMember['user']['id'];
-		$this->member_first_name = $ChatMember['user']['first_name'];
-		$this->member_last_name = $ChatMember['user']['last_name'];
-		$this->member_username = $ChatMember['user']['username'];
-		$this->member_status = $ChatMember['status'];
-		$this->member_title = $ChatMember['custom_title'];
-		$this->member_anonymous = $ChatMember['is_anonymous'];
-		$this->member_perms_be_edit = $ChatMember['can_be_edited'];
-		$this->member_perms_manage = $ChatMember['can_manage_chat '];
-		$this->member_perms_post = $ChatMember['can_post_messages'];
-		$this->member_perms_edit_post = $ChatMember['can_edit_messages'];
-		$this->member_perms_delete = $ChatMember['can_delete_messages'];
-		$this->member_perms_manage_voice = $ChatMember['can_manage_video_chats'];
-		$this->member_perms_restrict = $ChatMember['can_restrict_members'];
-		$this->member_perms_promote = $ChatMember['can_promote_members'];
-		$this->member_perms_change_info = $ChatMember['can_change_info'];
-		$this->member_perms_invite = $ChatMember['can_invite_users'];
-		$this->member_perms_pin = $ChatMember['can_pin_messages'];
-		$this->member_is = $ChatMember['is_member'];
-		$this->member_perms_send = $ChatMember['can_send_messages'];
-		$this->member_perms_media = $ChatMember['can_send_media_messages'];
-		$this->member_perms_polls = $ChatMember['can_send_polls'];
-		$this->member_perms_other = $ChatMember['can_send_other_messages'];
-		$this->member_perms_preview = $ChatMember['can_add_web_page_previews'];
-		$this->member_until = $ChatMember['until_date'];
+		$this->chat_member = $ChatMember;
 	}
 
 	public function varChatMemberUpdated ($ChatMemberUpdated) {
@@ -550,12 +602,14 @@ class Variables
 		$this->date = $ChatMemberUpdated['date'];
 		$this->varChatMember($ChatMemberUpdated['new_chat_member']);
 		$this->invite_link = $ChatMemberUpdated['invite_link'];
+		$this->via_chat_folder_invite_link = $ChatMemberUpdated['via_chat_folder_invite_link'];
 	}
 
 	public function varChatJoinRequest ($ChatJoinRequest) {
 		if (empty($ChatJoinRequest)) return;
 		$this->varChat($ChatJoinRequest['chat']);
 		$this->varUser($ChatJoinRequest['from']);
+		$this->user_chat_id = $ChatJoinRequest['user_chat_id'];
 		$this->date = $ChatJoinRequest['date'];
 		$this->user_bio = $ChatJoinRequest['bio'];
 		$this->invite_link = $ChatJoinRequest['invite_link'];
@@ -565,25 +619,32 @@ class Variables
 		if (empty($Sticker)) return;
 		$this->sticker_id = $Sticker['file_id'];
 		$this->sticker_uid = $Sticker['file_unique_id'];
+		$this->sticker_type = $Sticker['type'];
 		$this->sticker_witdh = $Sticker['width'];
 		$this->sticker_height = $Sticker['height'];
-		$this->sticker_video = $Sticker['is_video'];
 		$this->sticker_animated = $Sticker['is_animated'];
+		$this->sticker_video = $Sticker['is_video'];
 		$this->sticker_thumb = $Sticker['thumb'];
 		$this->sticker_emoji = $Sticker['emoji'];
 		$this->sticker_set = $Sticker['set_name'];
 		$this->sticker_premium = $Sticker['premium_animation'];
 		$this->sticker_mask = $Sticker['mask_position'];
+		$this->sticker_custom_emoji_id = $Sticker['custom_emoji_id'];
+		$this->sticker_needs_repainting = $Sticker['needs_repainting'];
 		$this->sticker_size = $Sticker['file_size'];
+	}
+	
+	public function varStory ($Story) {
+		if (empty($Story)) return;
 	}
 	
 	public function varStickerSet ($StickerSet) {
 		if (empty($StickerSet)) return;
 		$this->stickers = $StickerSet['name'];
 		$this->stickers_name = $StickerSet['title'];
+		$this->stickers_type = $StickerSet['sticker_type'];
 		$this->stickers_animated = $StickerSet['is_animated'];
 		$this->stickers_video = $StickerSet['is_video'];
-		$this->stickers_contains_masks = $StickerSet['contains_masks'];
 		$this->stickers_thumb = $StickerSet['thumb'];
 	}
 
@@ -660,6 +721,7 @@ class Variables
 			'can_invite_users',
 			'can_restrict_members',
 			'can_pin_messages',
+			'can_manage_topics',
 			'can_promote_members'
 		];
 	}
@@ -674,7 +736,10 @@ class Variables
 			'can_delete_messages',
 			'can_restrict_members',
 			'can_promote_members',
-			'can_change_info'
+			'can_change_info',
+			'can_post_stories',
+			'can_edit_stories',
+			'can_delete_stories'
 		];
 	}
 }

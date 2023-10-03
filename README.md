@@ -6,7 +6,7 @@
 
 Develop your own Telegram Bot in PHP with NeleBot X!
 
-Updated to Telegram Bot API 6.1!
+Updated to Telegram Bot API 6.9!
 
 ### Requirements
 

@@ -8,23 +8,28 @@
 if ($v->via_bot) die;
 
 # Print the result from Database
-if ($v->command == 'data') {
-	$juser = $bot->code(substr(json_encode($user, JSON_PRETTY_PRINT), 0, 1024), 1);
-	$jgroup = $bot->code(substr(json_encode($group, JSON_PRETTY_PRINT), 0, 1024), 1);
-	$jchannel = $bot->code(substr(json_encode($channel, JSON_PRETTY_PRINT), 0, 1024), 1);
-	$bot->sendMessage($v->chat_id, $juser . PHP_EOL . $jgroup . PHP_EOL . $jchannel);
-}
-# Dump the update
-elseif ($v->command == 'dump') {
-	$bot->sendMessage($v->chat_id, $bot->code(json_encode($v->update, JSON_PRETTY_PRINT), 1));
-}
-# Dump NeleBot X Variables
-elseif ($v->command == 'neledump') {
-	$bot->sendMessage($v->chat_id, $bot->code(substr(json_encode($v, JSON_PRETTY_PRINT), 2500, 4096), 1));
+if ($v->isAdmin()) {
+	if ($v->command == 'data') {
+		$juser = $bot->code(substr(json_encode($user, JSON_PRETTY_PRINT), 0, 1024), 1);
+		$jgroup = $bot->code(substr(json_encode($group, JSON_PRETTY_PRINT), 0, 1024), 1);
+		$jchannel = $bot->code(substr(json_encode($channel, JSON_PRETTY_PRINT), 0, 1024), 1);
+		$bot->sendMessage($v->chat_id, $juser . PHP_EOL . $jgroup . PHP_EOL . $jchannel);
+		die;
+	}
+	# Dump the update
+	elseif ($v->command == 'dump') {
+		$bot->sendMessage($v->chat_id, $bot->code(json_encode($v->update, JSON_PRETTY_PRINT), 1));
+		die;
+	}
+	# Dump NeleBot X Variables
+	elseif ($v->command == 'neledump') {
+		$bot->sendMessage($v->chat_id, $bot->code(substr(json_encode($v, JSON_PRETTY_PRINT), 0, 4096), 1));
+		die;
+	}
 }
 
 # Private chat with Bot
-elseif ($v->chat_type == 'private') {
+if ($v->chat_type == 'private') {
 	# Register that the user has started the Bot in one string
 	if ($bot->configs['database']['status'] && $user['status'] !== 'started') $db->setStatus($v->user_id, 'started');
 	# Check the exec time of all script to here (Bot-Admin only)
@@ -52,8 +57,8 @@ elseif ($v->chat_type == 'private') {
 	}
 	# Start Command (via command or query_data)
 	elseif ($v->command == 'start' || $v->query_data == 'start') {
-		$buttons[] = [$bot->createInlineButton('📥 Download NeleBot X!', 'https://t.me/NeleBotX', 'url')];
-		$buttons[] = [$bot->createInlineButton('ℹ️ About NeleBot X', 'help')];
+		$buttons[][] = $bot->createInlineButton('📥 Download NeleBot X!', 'https://t.me/NeleBotX', 'url');
+		$buttons[][] = $bot->createInlineButton('ℹ️ About NeleBot X', 'help');
 		$link_preview = $bot->text_link(' ', 'https://telegra.ph/file/f508ceecf6dedc95c3be1.jpg');
 		$t = $link_preview . $bot->bold('NeleBot X Framework') . PHP_EOL . $bot->italic('Develop your own Telegram Bot in PHP!');
 		if ($v->query_id) {
@@ -65,9 +70,13 @@ elseif ($v->chat_type == 'private') {
 	}
 	# Help command
 	elseif ($v->command == 'help' || $v->query_data == 'help') {
-		$buttons[] = [$bot->createInlineButton('📥 Download NeleBot X!', 'https://t.me/NeleBotX', 'url'), $bot->createInlineButton('❓ F.A.Q.', 'https://t.me/NeleBotX', 'url')];
-		$buttons[] = [$bot->createInlineButton('🙋🏻‍♂️ What NeleBot X can do?', 'examples')];
-		$buttons[] = [$bot->createInlineButton('◀️ Back', 'start')];
+		$buttons[] = [
+			$bot->createInlineButton('📥 Download NeleBot X!', 'https://t.me/NeleBotX', 'url'),
+			$bot->createInlineButton('❓ F.A.Q.', 'https://t.me/NeleBotX', 'url')
+		];
+		$buttons[][] = $bot->createInlineButton('🙋🏻‍♂️ What NeleBot X can do?', 'examples');
+		$buttons[][] = $bot->createInlineButton('😁 Guide', 'https://neleb54gold.github.io/NeleBotX/', 'web_app');
+		$buttons[][] = $bot->createInlineButton('◀️ Back', 'start');
 		# Check redis status to cache the commands list
 		if ($bot->configs['redis']['status']) {
 			if ($cache = $db->rget('NeleBotX-' . $bot->id . '-commandsList')) $commands = json_decode($cache, true);
