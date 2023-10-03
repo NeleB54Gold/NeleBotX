@@ -96,7 +96,7 @@ $configs = [
 		# 4. Default requests timeout seconds	(Optional)	[Number]
 		'timeout'					=> 2,
 		# 5. NeleBotX Framework version
-		'version'					=> '1.2.0'
+		'version'					=> '1.3.0'
 ];
 
 ?>
