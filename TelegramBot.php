@@ -9,6 +9,9 @@ class TelegramBot
 		'ok' => false
 	];
 	public $update = [];
+	public $curl = null;
+	public $current_thread_id = null;
+	public const BOT_API_VERSION = '10.4';
 	
 	public function __construct ($configs) {
 		$this->configs = $configs;
@@ -28,9 +31,7 @@ class TelegramBot
 	
 	# Get the current NeleBot X configs
 	public function getConfigs () {
-		if (isset($this->configs)) return $this->configs;
-		require('configs.php');
-		return $this->configs = $configs;
+		return $this->configs;
 	}
 	
 	# Send logs to Telegram chat
@@ -41,31 +42,104 @@ class TelegramBot
 	
 	# Requests
 	public function request ($url, $args = [], $post = 'def', $response = 'def', $timeout = 'def') {
-		if ($post === 'def')		$post = $this->configs['post'];
-		if ($response === 'def')	$response = $this->configs['response'];
-		if ($timeout === 'def')		$timeout = $this->configs['timeout'];
-		if (!isset($this->curl))	$this->curl = curl_init();
-		curl_setopt_array($this->curl, [
-			CURLOPT_URL				=> $url,
-			CURLOPT_POST			=> $post,
-			CURLOPT_POSTFIELDS		=> $args,
-			CURLOPT_TIMEOUT			=> $timeout,
-			CURLOPT_RETURNTRANSFER	=> $response
-		]);
+		$post = ($post === 'def') ? ($this->configs['post'] ?? true) : (bool) $post;
+		$response = ($response === 'def') ? ($this->configs['response'] ?? true) : (bool) $response;
+		$timeout = ($timeout === 'def') ? ($this->configs['timeout'] ?? 10) : (int) $timeout;
+		if (!function_exists('curl_init')) {
+			return ['ok' => false, 'error_code' => 500, 'description' => 'cURL extension is not installed'];
+		}
+		if (!is_resource($this->curl) && !($this->curl instanceof \CurlHandle)) {
+			$this->curl = curl_init();
+		}
+		if ($this->curl === false) {
+			return ['ok' => false, 'error_code' => 500, 'description' => 'Unable to initialize cURL'];
+		}
+		// Clear options from the previous request while reusing the cURL handle.
+		curl_reset($this->curl);
+
+		$options = [
+			CURLOPT_URL => $url,
+			CURLOPT_POST => $post,
+			CURLOPT_TIMEOUT => max(1, $timeout),
+			CURLOPT_CONNECTTIMEOUT => min(max(1, $timeout), 10),
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_FOLLOWLOCATION => false,
+			CURLOPT_HTTPHEADER => ['Accept: application/json']
+		];
+		if ($post) {
+			$options[CURLOPT_POSTFIELDS] = $args;
+		} elseif (is_array($args) && $args !== []) {
+			$options[CURLOPT_URL] = $url . (str_contains($url, '?') ? '&' : '?') . http_build_query($args);
+		}
+		curl_setopt_array($this->curl, $options);
 		$output = curl_exec($this->curl);
-		if ($json_output = json_decode($output, true)) return $json_output;
-		if ($output) return $output;
-		if ($error = curl_error($this->curl)) return ['ok' => false, 'error_code' => 500, 'description' => 'CURL Error: ' . $error];
-		return;
+		$curlError = curl_error($this->curl);
+		$httpCode = (int) curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+
+		if ($output === false) {
+			return ['ok' => false, 'error_code' => 500, 'description' => 'CURL Error: ' . ($curlError ?: 'unknown transport error')];
+		}
+
+		try {
+			$decoded = json_decode($output, true, 512, JSON_THROW_ON_ERROR);
+		} catch (\JsonException $e) {
+			$decoded = null;
+		}
+		$result = is_array($decoded)
+			? $decoded
+			: ['ok' => false, 'error_code' => ($httpCode ?: 502), 'description' => 'Invalid JSON response from Telegram Bot API', 'body' => $output];
+
+		if ($httpCode >= 400 && !isset($result['error_code'])) {
+			$result['error_code'] = $httpCode;
+		}
+		if (!$response) {
+			echo $output;
+			return true;
+		}
+		return $result;
+	}
+
+	/**
+	 * Call any Telegram Bot API method, including methods added after this
+	 * framework's named wrappers were written.
+	 *
+	 * @param string $method Telegram Bot API method name (for example, sendMessage).
+	 * @param array $parameters Method parameters. Nested structures are JSON encoded
+	 *                          automatically; file uploads may use CURLFile.
+	 * @param bool $post Whether to use POST. POST is recommended for all mutations.
+	 * @return array|string|bool Telegram response or a transport error.
+	 */
+	public function callApi(string $method, array $parameters = [], bool $post = true) {
+		if (!preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $method)) {
+			return ['ok' => false, 'error_code' => 400, 'description' => 'Invalid Telegram Bot API method name'];
+		}
+		foreach ($parameters as $key => $value) {
+			if (is_array($value)) {
+				$parameters[$key] = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+			}
+		}
+		return $this->request($this->api($method), $parameters, $post, true);
+	}
+
+	/** Alias for callApi(), useful for generic integrations. */
+	public function call(string $method, array $parameters = [], bool $post = true) {
+		return $this->callApi($method, $parameters, $post);
 	}
 	
 	# Get the current Telegram Update
 	public function getUpdate () {
 		$this->update = [];
-		if ($update = file_get_contents('php://input')) {
-			if ($update = json_decode($update, true)) {
+		$rawUpdate = file_get_contents('php://input');
+		if ($rawUpdate === false || $rawUpdate === '') {
+			return $this->update;
+		}
+		try {
+			$update = json_decode($rawUpdate, true, 512, JSON_THROW_ON_ERROR);
+			if (is_array($update)) {
 				$this->update = $update;
 			}
+		} catch (\JsonException $e) {
+			$this->update = [];
 		}
 		return $this->update;
 	}
@@ -83,21 +157,31 @@ class TelegramBot
 	// Telegram methods
 	// Search the method name here to edit a function
 	
+	public function sendWidget(array $parameters) { return $this->callApi('sendWidget', $parameters); }
+	public function sendSharedWidget(array $parameters) { return $this->callApi('sendSharedWidget', $parameters); }
+	public function answerWidgetQuery(array $parameters) { return $this->callApi('answerWidgetQuery', $parameters); }
+	public function editMessageWidgetData(array $parameters) { return $this->callApi('editMessageWidgetData', $parameters); }
+	public function editSharedWidgetData(array $parameters) { return $this->callApi('editSharedWidgetData', $parameters); }
+	public function getChatShareThemeBackdrops(array $parameters = []) { return $this->callApi('getChatShareThemeBackdrops', $parameters, false); }
+	public function getUniqueGift(string $name) { return $this->callApi('getUniqueGift', ['name' => $name], false); }
+	public function deleteBusinessAccountGift(string $business_connection_id, string $owned_gift_id) { return $this->callApi('deleteBusinessAccountGift', ['business_connection_id' => $business_connection_id, 'owned_gift_id' => $owned_gift_id]); }
+
 	# setWebhook
 	public function setWebhook ($url, $certificate = null, $ip = null, $connections = 40, $updates = null, $drop = false, $secret = null) {
-		$args['url'] = $url;
+		$args = ['url' => $url];
 		if ($certificate) $args['certificate'] = $certificate;
 		if ($ip) $args['ip_address'] = $ip;
 		if ($connections) $args['max_connections'] = $connections;
 		if ($updates) $args['allowed_updates'] = json_encode($updates);
-		if ($drop) $args['drop'] = true;
+		if ($drop) $args['drop_pending_updates'] = true;
 		if ($secret) $args['secret_token'] = $secret;
 		return $this->request($this->api('setWebhook'), $args, 'def', true);
 	}
 	
 	# deleteWebhook
 	public function deleteWebhook ($drop = false) {
-		if ($drop) $args['drop'] = true;
+		$args = [];
+		if ($drop) $args['drop_pending_updates'] = true;
 		return $this->request($this->api('deleteWebhook'), $args, 'def', true);
 	}
 	
@@ -139,7 +223,7 @@ class TelegramBot
 		if ($preview) $args['disable_web_page_preview'] = true;
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -178,7 +262,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -202,7 +286,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($has_spoiler) $args['has_spoiler'] = true;
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
@@ -227,7 +311,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -252,7 +336,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -276,7 +360,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($has_spoiler) $args['has_spoiler'] = true;
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
@@ -301,7 +385,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($has_spoiler) $args['has_spoiler'] = true;
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
@@ -326,7 +410,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -343,7 +427,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -359,7 +443,7 @@ class TelegramBot
 		if (isset($this->current_thread_id)) $args['message_thread_id'] = $this->current_thread_id;
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -378,7 +462,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -420,7 +504,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -440,7 +524,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
@@ -471,7 +555,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
 		return $this->request($this->api('sendDice'), $args, 'def', $response);
@@ -505,15 +589,20 @@ class TelegramBot
 		return $this->request($this->api('getFile'), $args, 'def', true);
 	}
 	
-	# kickChatMember
-	public function kickMember ($chat_id, $user_id, $delete_all_from = true, $until_date = false, $response = 'def') {
+	# banChatMember (modern method name)
+	public function banMember ($chat_id, $user_id, $delete_all_from = true, $until_date = false, $response = 'def') {
 		$args = [
 			'chat_id'			=> $chat_id,
 			'user_id'			=> $user_id,
-			'revoke_messages'	=> $delete_all_from,
-			'until_date'		=> $until_date
+			'revoke_messages'	=> $delete_all_from
 		];
-		return $this->request($this->api('kickChatMember'), $args, 'def', $response);
+		if ($until_date !== false && $until_date !== null) $args['until_date'] = $until_date;
+		return $this->request($this->api('banChatMember'), $args, 'def', $response);
+	}
+
+	# Legacy alias retained for existing plugins; Telegram's current method is banChatMember.
+	public function kickMember ($chat_id, $user_id, $delete_all_from = true, $until_date = false, $response = 'def') {
+		return $this->banMember($chat_id, $user_id, $delete_all_from, $until_date, $response);
 	}
 	
 	# unbanChatMember
@@ -732,12 +821,15 @@ class TelegramBot
 		return $this->request($this->api('getChatAdministrators'), $args, 'def', true);
 	}
 	
-	# getChatMembersCount
+	# getChatMemberCount (modern method name)
+	public function getMemberCount ($chat_id) {
+		$args = ['chat_id' => $chat_id];
+		return $this->request($this->api('getChatMemberCount'), $args, 'def', true);
+	}
+
+	# Legacy alias retained for existing plugins.
 	public function getMembersCount ($chat_id) {
-		$args = [
-			'chat_id'	=> $chat_id
-		];
-		return $this->request($this->api('getChatMembersCount'), $args, 'def', true);
+		return $this->getMemberCount($chat_id);
 	}
 	
 	# getChatMember
@@ -1085,7 +1177,7 @@ class TelegramBot
 		if (!empty($buttons) and is_array($buttons)) $args['reply_markup'] = json_encode($this->createButtons($buttons, $buttonsType));
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		return $this->request($this->api('sendSticker'), $args, 'def', $response);
@@ -1246,7 +1338,7 @@ class TelegramBot
 		if (isset($this->current_thread_id)) $args['message_thread_id'] = $this->current_thread_id;
 		if ($reply and is_numeric($reply)) {
 			$args['reply_to_message_id'] = $reply;
-			$args['allow_sending_without_reply'] = $this->configs['allow_sending_without_reply'];
+			$args['allow_sending_without_reply'] = ($this->configs['allow_sending_without_reply'] ?? $this->configs['allow_sending_w/out_reply'] ?? true);
 		}
 		if ($this->configs['disable_notification']) $args['disable_notification'] = true;
 		if ($this->configs['protect_content']) $args['protect_content'] = true;
@@ -1552,7 +1644,8 @@ class TelegramBot
 	}
 
 	# InlineQueryResultArticle
-	public function createInlineArticle ($id, $title, $description = false, $input, $buttons = false, $url = false, $hide_url = false, $thumbnail = false, $buttonsType = 'inline') {
+	public function createInlineArticle ($id, $title, $description = false, $input = null, $buttons = false, $url = false, $hide_url = false, $thumbnail = false, $buttonsType = 'inline') {
+		if ($input === null) throw new \InvalidArgumentException('input is required for createInlineArticle().');
 		$args = [
 			'type'					=> 'article',
 			'id'					=> $id,
@@ -1568,7 +1661,8 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultPhoto
-	public function createInlinePhoto ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+	public function createInlinePhoto ($id, $title, $description = false, $document = null, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+		if ($document === null) throw new \InvalidArgumentException('document is required for createInlinePhoto().');
 		$args = [
 			'type'					=> 'photo',
 			'id'					=> $id,
@@ -1593,7 +1687,8 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultGif
-	public function createInlineGif ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+	public function createInlineGif ($id, $title, $description = false, $document = null, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+		if ($document === null) throw new \InvalidArgumentException('document is required for createInlineGif().');
 		$args = [
 			'type'					=> 'gif',
 			'id'					=> $id,
@@ -1618,7 +1713,8 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultVideo
-	public function createInlineVideo ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+	public function createInlineVideo ($id, $title, $description = false, $document = null, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+		if ($document === null) throw new \InvalidArgumentException('document is required for createInlineVideo().');
 		$args = [
 			'type'					=> 'video',
 			'id'					=> $id,
@@ -1644,7 +1740,8 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultAudio
-	public function createInlineAudio ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $buttonsType = 'inline') {
+	public function createInlineAudio ($id, $title, $description = false, $document = null, $caption = false, $parse = 'def', $buttons = false, $buttonsType = 'inline') {
+		if ($document === null) throw new \InvalidArgumentException('document is required for createInlineAudio().');
 		$args = [
 			'type'					=> 'audio',
 			'id'					=> $id,
@@ -1664,7 +1761,8 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultVoice
-	public function createInlineVoice ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $buttonsType = 'inline') {
+	public function createInlineVoice ($id, $title, $description = false, $document = null, $caption = false, $parse = 'def', $buttons = false, $buttonsType = 'inline') {
+		if ($document === null) throw new \InvalidArgumentException('document is required for createInlineVoice().');
 		$args = [
 			'type'					=> 'voice',
 			'id'					=> $id,
@@ -1684,7 +1782,8 @@ class TelegramBot
 	}
 	
 	# InlineQueryResultDocument
-	public function createInlineDocument ($id, $title, $description = false, $document, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+	public function createInlineDocument ($id, $title, $description = false, $document = null, $caption = false, $parse = 'def', $buttons = false, $thumbnail = false, $buttonsType = 'inline') {
+		if ($document === null) throw new \InvalidArgumentException('document is required for createInlineDocument().');
 		$args = [
 			'type'					=> 'document',
 			'id'					=> $id,

@@ -1,5 +1,13 @@
 <?php
 
+
+// This bundled plugin uses the legacy normalized message properties. New Bot API
+// update types are exposed as $v->update_type / $v->update_data and should be
+// handled by a purpose-built plugin instead.
+if (!empty($v->update_type)) {
+    return;
+}
+
 # Commands for Bot administrators only
 if ($v->chat_type == 'private' and $v->isAdmin()) {
 	# Database Setup

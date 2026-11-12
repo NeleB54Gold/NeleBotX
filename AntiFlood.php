@@ -8,6 +8,8 @@ class AntiFlood {
 	public $send_notice = 0;
 	public $key = 'NeleBotX-AF-0';
 	public $updates = [];
+	public $rkey = null;
+	public $rbkey = null;
 	
 	public function __construct ($db, $id) {
 		if (!$db or in_array($id, $db->configs['admins'])) return;

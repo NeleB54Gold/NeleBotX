@@ -4,8 +4,10 @@
 $configs = [
 
 	# 1. Telegram API configs
-		# 1. Set the Telegram Bot API token		(Optional)	[Number:Text/Crypted]
+		# 1. Expected Telegram Bot API token (leave empty for multi-bot mode)	(Optional)	[Text]
 		'token'						=> '',
+		'webhook_password'			=> '',
+		'webhook_secret_token'		=> '',
 		# 2. Telegram Local/Public API			(Required)	[URL]
 		'telegram_bot_api'			=> 'https://api.telegram.org',
 		# 3. Default parse mode					(Optional)	[Text: html/markdown/markdownv2]
@@ -22,6 +24,7 @@ $configs = [
 		'commands_alias'			=> ['/', '!'],
 	
 	# 2. Logging configs
+		'log_file'					=> '/var/log/bots/NeleBotX.log',
 		# 1. Set the chat ID for Bot logs		(Optional)	[Number]
 		'log_chat'					=> 244432022,
 		# 2. Choose the errors to log			(Optional)	[Array of Number => bool]
@@ -96,7 +99,7 @@ $configs = [
 		# 4. Default requests timeout seconds	(Optional)	[Number]
 		'timeout'					=> 2,
 		# 5. NeleBotX Framework version
-		'version'					=> '1.3.0'
+		'version'					=> '2.0'
 ];
 
 ?>

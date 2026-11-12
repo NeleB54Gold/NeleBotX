@@ -1,0 +1,24 @@
+{
+  "name": "neleb54gold/nelebotx",
+  "description": "NeleBot X Framework 2.0 for Telegram bots targeting Bot API 10.4. Developed with vibe coding; review and test carefully before production use.",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "ext-curl": "*",
+    "ext-openssl": "*"
+  },
+  "autoload": {
+    "classmap": [
+      "AntiFlood.php",
+      "WebhookKey.php",
+      "Database.php",
+      "NeleBotX.php",
+      "TelegramBot.php",
+      "Variables.php"
+    ]
+  },
+  "scripts": {
+    "test": "php tests/smoke.php && php tests/webhook-manager.php"
+  }
+}
