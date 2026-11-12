@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://telegra.ph/file/f508ceecf6dedc95c3be1.jpg" alt="Banner" />
+    <img width="1376" height="768" alt="1794485519036" src="https://github.com/user-attachments/assets/76a87587-da8e-4d5b-8b50-48e91a489ff3" />
 </p>
 
 # NeleBot X Framework 2.0
