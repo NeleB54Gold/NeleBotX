@@ -1,5 +1,6 @@
 <?php
 
+#[\AllowDynamicProperties]
 class Variables
 {
 	public $configs = [];
@@ -7,50 +8,65 @@ class Variables
 	public $response = [
 		'ok' => 0
 	];
+	public $update_type = null;
+	public $update_data = null;
 	
-	public function __construct ($configs, $update) {
+	public function __construct ($configs, $update = []) {
 		$this->configs = $configs;
 		if (empty($update)) return $this->response = ['ok' => 1];
 		$this->update = $update;
 		if (!isset($this->update['update_id'])) {
 			return $this->response = ['ok' => 0, 'error_code' => 400, 'description' => 'Bad Request: update_id not found'];
-		} elseif ($this->update['message']) {
-			$this->varMessage($this->update['message']);
-		} elseif ($this->update['edited_message']) {
-			$this->varMessage($this->update['edited_message']);
-		} elseif ($this->update['channel_post']) {
-			$this->varMessage($this->update['channel_post']);
-		} elseif ($this->update['edited_channel_post']) {
-			$this->varMessage($this->update['edited_channel_post']);
-		} elseif ($this->update['inline_query']) {
-			$this->varInlineQuery($this->update['inline_query']);
-		} elseif ($this->update['chosen_inline_result']) {
-			$this->varChosenInlineResult($this->update['chosen_inline_result']);
-		} elseif ($this->update['callback_query']) {
-			$this->varCallbackQuery($this->update['callback_query']);
-		} elseif ($this->update['shipping_query']) {
-			$this->varShippingQuery($this->update['shipping_query']);
-		} elseif ($this->update['pre_checkout_query']) {
-			$this->varPreCheckoutQuery($this->update['pre_checkout_query']);
-		} elseif ($this->update['poll']) {
-			$this->varPoll($this->update['poll']);
-		} elseif ($this->update['poll_answer']) {
-			$this->varPollAnswer($this->update['poll_answer']);
-		} elseif ($this->update['my_chat_member']) {
-			$this->varChatMemberUpdated($this->update['my_chat_member']);
-		} elseif ($this->update['chat_member']) {
-			$this->varChatMemberUpdated($this->update['chat_member']);
-		} elseif ($this->update['chat_join_request']) {
-			$this->varChatJoinRequest($this->update['chat_join_request']);
+		} elseif (($this->update['message'] ?? null)) {
+			$this->varMessage(($this->update['message'] ?? null));
+		} elseif (($this->update['edited_message'] ?? null)) {
+			$this->varMessage(($this->update['edited_message'] ?? null));
+		} elseif (($this->update['channel_post'] ?? null)) {
+			$this->varMessage(($this->update['channel_post'] ?? null));
+		} elseif (($this->update['edited_channel_post'] ?? null)) {
+			$this->varMessage(($this->update['edited_channel_post'] ?? null));
+		} elseif (($this->update['inline_query'] ?? null)) {
+			$this->varInlineQuery(($this->update['inline_query'] ?? null));
+		} elseif (($this->update['chosen_inline_result'] ?? null)) {
+			$this->varChosenInlineResult(($this->update['chosen_inline_result'] ?? null));
+		} elseif (($this->update['callback_query'] ?? null)) {
+			$this->varCallbackQuery(($this->update['callback_query'] ?? null));
+		} elseif (($this->update['shipping_query'] ?? null)) {
+			$this->varShippingQuery(($this->update['shipping_query'] ?? null));
+		} elseif (($this->update['pre_checkout_query'] ?? null)) {
+			$this->varPreCheckoutQuery(($this->update['pre_checkout_query'] ?? null));
+		} elseif (($this->update['poll'] ?? null)) {
+			$this->varPoll(($this->update['poll'] ?? null));
+		} elseif (($this->update['poll_answer'] ?? null)) {
+			$this->varPollAnswer(($this->update['poll_answer'] ?? null));
+		} elseif (($this->update['my_chat_member'] ?? null)) {
+			$this->varChatMemberUpdated(($this->update['my_chat_member'] ?? null));
+		} elseif (($this->update['chat_member'] ?? null)) {
+			$this->varChatMemberUpdated(($this->update['chat_member'] ?? null));
+		} elseif (($this->update['chat_join_request'] ?? null)) {
+			$this->varChatJoinRequest(($this->update['chat_join_request'] ?? null));
+		} elseif (($this->update['widget_query'] ?? null)) {
+			$this->update_type = 'widget_query';
+			$this->update_data = $this->update['widget_query'];
+		} elseif (($this->update['shared_widget_query'] ?? null)) {
+			$this->update_type = 'shared_widget_query';
+			$this->update_data = $this->update['shared_widget_query'];
 		} else {
-			return $this->response = ['ok' => 0, 'error_code' => 404, 'description' => 'Not Found: unknown update type'];
+			// Forward compatibility: allow plugins to process update types introduced
+			// by newer Bot API releases even before a dedicated Variables parser exists.
+			$updateTypes = array_diff_key($this->update, ['update_id' => true]);
+			if (count($updateTypes) !== 1) {
+				return $this->response = ['ok' => 0, 'error_code' => 400, 'description' => 'Bad Request: update type is missing or ambiguous'];
+			}
+			$this->update_type = (string) array_key_first($updateTypes);
+			$this->update_data = reset($updateTypes);
 		}
 		return $this->response = ['ok' => 1];
 	}
 
 	public function isAdmin($id = 'def') {
 		if ($id === 'def') {
-			return in_array($this->user_id, $this->configs['admins']);
+			return isset($this->user_id) && in_array($this->user_id, $this->configs['admins'] ?? [], true);
 		} elseif (!is_numeric($id)) {
 			return 0;
 		} else {
@@ -59,7 +75,7 @@ class Variables
 	}
 	
 	public function isOwner($id = 'def') {
-		if ($id === 'def' and isset($this->administrators[$this->user_id]) and $this->administrators[$this->user_id]['status'] == 'creator') {
+		if ($id === 'def' and isset($this->user_id, $this->administrators[$this->user_id]) and $this->administrators[$this->user_id]['status'] == 'creator') {
 			return 1;
 		} elseif (isset($this->administrators[$id]) and $this->administrators[$id]['status'] == 'creator') {
 			return 1;
@@ -69,7 +85,7 @@ class Variables
 	}
 	
 	public function isStaff($id = 'def') {
-		if ($id === 'def' and isset($this->administrators[$this->user_id])) {
+		if ($id === 'def' and isset($this->user_id, $this->administrators[$this->user_id])) {
 			return 1;
 		} elseif (isset($this->administrators[$id])) {
 			return 1;
@@ -129,6 +145,11 @@ class Variables
 	
 	public function varMessage ($Message) {
 		if (empty($Message)) return;
+		$this->raw_message = $Message;
+		$this->widget = $Message['widget'] ?? null;
+		$this->ton_wallet_transfer = $Message['ton_wallet_transfer'] ?? null;
+		$this->share_theme = $Message['share_theme'] ?? null;
+		$this->rich_texts = $Message['rich_texts'] ?? null;
 		$this->message_id = $Message['message_id'];
 		$this->message_thread_id  = $Message['message_thread_id '];
 		$this->varUser($Message['from']);

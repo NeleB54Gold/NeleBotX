@@ -41,7 +41,7 @@ class NeleBotX
 		$this->channel = $this->loadChannel();
 		
 		# Stop script for banned chats
-		if (!$this->v->isAdmin() and ($this->user['ban'] or $this->group['ban'] or $this->channel['ban'])) return $this->response = ['ok' => false, 'error_code' => 429, 'description' => 'Banned from the Bot'];
+		if (!$this->v->isAdmin() && (!empty($this->user['ban']) || !empty($this->group['ban']) || !empty($this->channel['ban']))) return $this->response = ['ok' => false, 'error_code' => 429, 'description' => 'Banned from the Bot'];
 		
 		# AntiFlood System
 		if ($this->configs['redis']['status'] and $this->configs['redis']['antiflood']['status']) {
@@ -97,7 +97,7 @@ class NeleBotX
 					$this->db->query("UPDATE groups SET admins = ?, last_seen = ? WHERE id = ?", [json_encode($q['admins']), $q['last_seen'], $q['id']]);
 				}
 			}
-			$this->v->varChatAdministrators($q['admins']);
+			$this->v->varChatAdministrators($q['admins'] ?? []);
 			return $q;
 		}
 		return $this->v->getGroup();
@@ -117,7 +117,7 @@ class NeleBotX
 					$this->db->query("UPDATE channels SET admins = ?, last_seen = ? WHERE id = ?", [json_encode($q['admins']), $q['last_seen'], $q['id']]);
 				}
 			}
-			$this->v->varChatAdministrators($q['admins']);
+			$this->v->varChatAdministrators($q['admins'] ?? []);
 			return $q;
 		}
 		return $this->v->getChannel();

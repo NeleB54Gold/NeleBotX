@@ -1,0 +1,32 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+require_once __DIR__ . '/mock_api/curl_polyfill.php';
+require_once __DIR__ . '/../TelegramBot.php';
+function check(bool $ok, string $message): void { if (!$ok) { fwrite(STDERR, "FAIL: {$message}\n"); exit(1); } echo "PASS: {$message}\n"; }
+$base = getenv('NELEBOTX_FAKE_API') ?: 'http://127.0.0.1:18765';
+$config = ['token'=>'123456:TEST_TOKEN','telegram_bot_api'=>$base,'post'=>true,'response'=>true,'timeout'=>2,'parse_mode'=>'html','disable_web_page_preview'=>false,'allow_sending_without_reply'=>true,'protect_content'=>false,'disable_notification'=>false,'log_chat'=>false];
+$bot = new TelegramBot($config);
+$r = $bot->getMe();
+check(($r['ok'] ?? false) === true && ($r['result']['username'] ?? '') === 'nelebotx_test_bot', 'getMe traverses real HTTP to fake API');
+$r = $bot->sendMessage(42, 'Hello fake Telegram');
+check(($r['ok'] ?? false) === true && ($r['result']['text'] ?? '') === 'Hello fake Telegram', 'sendMessage request and response round-trip');
+$r = $bot->callApi('sendPaidMedia', ['chat_id'=>42,'star_count'=>25,'media'=>[['type'=>'photo','media'=>'FAKE_FILE_ID']]]);
+check(($r['ok'] ?? false) === true && ($r['result']['method'] ?? '') === 'sendPaidMedia', 'generic callApi supports methods without wrappers');
+$r = $bot->callApi('simulateHttpError');
+check(($r['ok'] ?? false) === false && ($r['error_code'] ?? 0) === 429, 'Telegram-style HTTP 429 error is preserved');
+$r = $bot->callApi('simulateServerError');
+check(($r['ok'] ?? false) === false && ($r['error_code'] ?? 0) === 503, 'HTTP 503 API error is preserved');
+$r = $bot->callApi('simulateInvalidJson');
+check(($r['ok'] ?? false) === false && str_contains($r['description'] ?? '', 'Invalid JSON'), 'invalid JSON is handled without fatal error');
+$r = $bot->callApi('simulateTimeout');
+check(($r['ok'] ?? false) === false && str_contains($r['description'] ?? '', 'CURL Error'), 'transport timeout returns a structured error');
+$legacyConfig = $config;
+unset($legacyConfig['allow_sending_without_reply']);
+$legacyConfig['allow_sending_w/out_reply'] = false;
+$legacyBot = new TelegramBot($legacyConfig);
+$r = $legacyBot->sendMessage(42, 'Legacy config fallback', false, 'def', false, 77);
+check(($r['ok'] ?? false) === true, 'legacy misspelled config key remains supported without PHP warnings');
+$r = $bot->callApi('../getMe');
+check(($r['ok'] ?? false) === false && ($r['error_code'] ?? 0) === 400, 'invalid API method path is rejected before HTTP');
+echo "Integration tests passed.\n";

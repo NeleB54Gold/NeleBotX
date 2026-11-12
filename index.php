@@ -1,30 +1,47 @@
 <?php
 
 $start_time = microtime(true);
-ini_set('display_startup_errors', 1);
-ini_set('display_errors', 1);
 ini_set('error_reporting', E_ALL);
-ini_set('error_log', __DIR__ . '/logs.txt');
 ini_set('ignore_repeated_errors', 1);
+require_once __DIR__ . '/Log.php';
+require_once __DIR__ . '/configs.php';
+if (!NeleBotXLog::configure($configs)) {
+	error_log('NeleBot X could not initialize the configured log file.');
+	http_response_code(500);
+	die('Logging initialization failed');
+}
 
-require_once('configs.php');
 require_once('errorHandler.php');
 require_once('TelegramBot.php');
 require_once('Variables.php');
 require_once('Database.php');
 require_once('AntiFlood.php');
 require_once('NeleBotX.php');
+require_once __DIR__ . '/WebhookKey.php';
 
 # Initialize framework
+$NeleBotX = null;
+$bot = null;
 try {
-	if (!$configs['token'] and $_GET['token']) { // Webhook multi-bot
-		$configs['token'] = $_GET['token'];
-	} elseif ($configs['token'] and $_GET['key']) { // Webhook per-bot
-		if (crypt($_GET['key'], 'NeleBotX') != $configs['token']) {
+	if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+		http_response_code(405);
+		header('Allow: POST');
+		die;
+	}
+	$expectedWebhookSecret = (string) ($configs['webhook_secret_token'] ?? '');
+	$receivedWebhookSecret = (string) ($_SERVER['HTTP_X_TELEGRAM_BOT_API_SECRET_TOKEN'] ?? '');
+	if ($expectedWebhookSecret === '' || $receivedWebhookSecret === '' || !hash_equals($expectedWebhookSecret, $receivedWebhookSecret)) {
+		http_response_code(403);
+		die;
+	}
+	if (!empty($_GET['key'])) {
+		$webhookPassword = (string) ($configs['webhook_password'] ?? '');
+		$decryptedToken = NeleBotXWebhookKey::decrypt((string) $_GET['key'], $webhookPassword);
+		if ($decryptedToken === null || (!empty($configs['token']) && !hash_equals((string) $configs['token'], $decryptedToken))) {
 			http_response_code(403);
 			die;
 		}
-		$configs['token'] = $_GET['key'];
+		$configs['token'] = $decryptedToken;
 	} else {
 		http_response_code(401);
 		die;
@@ -36,13 +53,19 @@ try {
 	$user = $NeleBotX->user;
 	$group = $NeleBotX->group;
 	$channel = $NeleBotX->channel;
-} catch (Exception $e) {
-	# Bot Exceptions
-	$NeleBotX->response = ['ok' => false, 'error_code' => 500, 'description' => 'Class Error: ' . $e->getMessage()];
+} catch (Throwable $e) {
+	# Catch both Exceptions and PHP Errors on modern PHP versions.
+	if ($NeleBotX instanceof NeleBotX) {
+		$NeleBotX->response = ['ok' => false, 'error_code' => 500, 'description' => 'Class Error: ' . $e->getMessage()];
+	} else {
+		http_response_code(500);
+		error_log('NeleBot X initialization failed: ' . $e->getMessage());
+		die('500');
+	}
 }
 if (!$NeleBotX->response['ok']) {
-	if ($NeleBotX->response['error_code'] != 429) $bot->sendLog($bot->bold('The Bot was stopped!') . PHP_EOL . $bot->code($NeleBotX->response['description'], 1));
-	die($NeleBotX->response['error_code']);
+	if (($NeleBotX->response['error_code'] ?? 500) != 429 && is_object($bot)) $bot->sendLog($bot->bold('The Bot was stopped!') . PHP_EOL . $bot->code($NeleBotX->response['description'] ?? 'Unknown error', 1));
+	die((string) ($NeleBotX->response['error_code'] ?? 500));
 } else {
 	http_response_code(200);
 	//fastcgi_finish_request(); // fastcgi only
